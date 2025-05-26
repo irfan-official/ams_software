@@ -1,0 +1,534 @@
+[
+  {
+    "week": 1,
+    "Date": "1/2/3",
+    "StudentID": ["0812110205101017", "0812110105101027", "0812110105101020"],
+    "Present": [
+      { "studentID": "0812110205101017", "status": true },
+      { "studentID": "0812110105101027", "status": true },
+      { "studentID": "0812110105101020", "status": false }
+    ],
+    "studentSignature": [
+      { "studentID": "0812110205101017", "signature": "" },
+      { "studentID": "0812110105101027", "signature": "" },
+      { "studentID": "0812110105101020", "signature": "" }
+    ],
+    "supervisorComments": [
+      { "studentID": "0812110205101017", "comment": "Good Student" },
+      { "studentId": "0812110105101027", "comment": "Average student" },
+      { "studentId": "0812110105101020", "comment": "Absent today" }
+    ],
+    "remarks": [
+      { "studentID": "0812110205101017", "remarks": "" },
+      { "studentID": "0812110105101027", "remarks": "" },
+      { "studentID": "0812110105101020", "remarks": "" }
+    ]
+  },
+  {
+    "week": 2,
+    "Date": "2/2/3",
+    "StudentID": ["0812110205101017", "0812110105101027", "0812110105101020"],
+    "Present": [
+      { "studentID": "0812110205101017", "status": false },
+      { "studentID": "0812110105101027", "status": true },
+      { "studentID": "0812110105101020", "status": true }
+    ],
+    "studentSignature": [
+      { "studentID": "0812110205101017", "signature": "" },
+      { "studentID": "0812110105101027", "signature": "" },
+      { "studentID": "0812110105101020", "signature": "" }
+    ],
+    "supervisorComments": [
+      { "studentID": "0812110205101017", "comment": "Absent today" },
+      { "studenID": "0812110105101027", "comment": "Improving" },
+      { "studenID": "0812110105101020", "comment": "Good effort" }
+    ],
+    "remarks": [
+      { "studenID": "0812110205101017", "remarks": "Needs to catch up" },
+      { "studenID": "0812110105101027", "remarks": "" },
+      { "studenID": "0812110105101020", "remarks": "" }
+    ]
+  },
+  {
+    "week": 3,
+    "Date": "3/2/3",
+    "StudentID": ["0812110205101017", "0812110105101027", "0812110105101020"],
+    "Present": [
+      { "studentID": "0812110205101017", "status": true },
+      { "studentID": "0812110105101027", "status": false },
+      { "studentID": "0812110105101020", "status": true }
+    ],
+    "studentSignature": [
+      { "studentID": "0812110205101017", "signature": "" },
+      { "studentID": "0812110105101027", "signature": "" },
+      { "studentID": "0812110105101020", "signature": "" }
+    ],
+    "supervisorComments": [
+      { "studentID": "0812110205101017", "comment": "Very attentive" },
+      { "studenID": "0812110105101027", "comment": "Absent today" },
+      { "studenID": "0812110105101020", "comment": "Good" }
+    ],
+    "remarks": [
+      { "studenID": "0812110205101017", "remarks": "" },
+      { "studenID": "0812110105101027", "remarks": "Uninformed absence" },
+      { "studenID": "0812110105101020", "remarks": "" }
+    ]
+  },
+  {
+    "week": 4,
+    "Date": "4/2/3",
+    "StudentID": ["0812110205101017", "0812110105101027", "0812110105101020"],
+    "Present": [
+      { "studentID": "0812110205101017", "status": true },
+      { "studentID": "0812110105101027", "status": true },
+      { "studentID": "0812110105101020", "status": true }
+    ],
+    "studentSignature": [
+      { "studentID": "0812110205101017", "signature": "" },
+      { "studentID": "0812110105101027", "signature": "" },
+      { "studentID": "0812110105101020", "signature": "" }
+    ],
+    "supervisorComments": [
+      { "studentID": "0812110205101017", "comment": "Excellent" },
+      { "studenID": "0812110105101027", "comment": "Good" },
+      { "studenID": "0812110105101020", "comment": "Great job" }
+    ],
+    "remarks": [
+      { "studenID": "0812110205101017", "remarks": "" },
+      { "studenID": "0812110105101027", "remarks": "" },
+      { "studenID": "0812110105101020", "remarks": "" }
+    ]
+  },
+  {
+    "week": 5,
+    "Date": "5/2/3",
+    "StudentID": ["0812110205101017", "0812110105101027", "0812110105101020"],
+    "Present": [
+      { "studentID": "0812110205101017", "status": true },
+      { "studentID": "0812110105101027", "status": false },
+      { "studentID": "0812110105101020", "status": false }
+    ],
+    "studentSignature": [
+      { "studentID": "0812110205101017", "signature": "" },
+      { "studentID": "0812110105101027", "signature": "" },
+      { "studentID": "0812110105101020", "signature": "" }
+    ],
+    "supervisorComments": [
+      { "studentID": "0812110205101017", "comment": "Only one present" },
+      { "studenID": "0812110105101027", "comment": "Missed class" },
+      { "studenID": "0812110105101020", "comment": "Absent today" }
+    ],
+    "remarks": [
+      { "studenID": "0812110205101017", "remarks": "" },
+      { "studenID": "0812110105101027", "remarks": "Needs follow-up" },
+      { "studenID": "0812110105101020", "remarks": "Warned" }
+    ]
+  },
+  {
+    "week": 6,
+    "Date": "6/2/3",
+    "StudentID": ["0812110205101017", "0812110105101027", "0812110105101020"],
+    "Present": [
+      { "studentID": "0812110205101017", "status": false },
+      { "studentID": "0812110105101027", "status": true },
+      { "studentID": "0812110105101020", "status": false }
+    ],
+    "studentSignature": [
+      { "studentID": "0812110205101017", "signature": "" },
+      { "studentID": "0812110105101027", "signature": "" },
+      { "studentID": "0812110105101020", "signature": "" }
+    ],
+    "supervisorComments": [
+      { "studentID": "0812110205101017", "comment": "Sick leave" },
+      { "studentID": "0812110105101027", "comment": "Did well" },
+      { "studenID": "0812110105101020", "comment": "Absent" }
+    ],
+    "remarks": [
+      {
+        "studentID": "0812110205101017",
+        "remarks": "Medical certificate needed"
+      },
+      { "studentID": "0812110105101027", "remarks": "" },
+      { "studentID": "0812110105101020", "remarks": "Repeated absence" }
+    ]
+  },
+  {
+    "week": 7,
+    "Date": "7/2/3",
+    "StudentID": ["0812110205101017", "0812110105101027", "0812110105101020"],
+    "Present": [
+      { "studentID": "0812110205101017", "status": true },
+      { "studentID": "0812110105101027", "status": true },
+      { "studentID": "0812110105101020", "status": true }
+    ],
+    "studentSignature": [
+      { "studentID": "0812110205101017", "signature": "" },
+      { "studentID": "0812110105101027", "signature": "" },
+      { "studentID": "0812110105101020", "signature": "" }
+    ],
+    "supervisorComments": [
+      { "studentID": "0812110205101017", "comment": "Back on track" },
+      { "studentID": "0812110105101027", "comment": "Consistent" },
+      { "studentID": "0812110105101020", "comment": "Improved" }
+    ],
+    "remarks": [
+      { "studentID": "0812110205101017", "remarks": "" },
+      { "studentID": "0812110105101027", "remarks": "" },
+      { "studentID": "0812110105101020", "remarks": "" }
+    ]
+  },
+  {
+    "week": 8,
+    "Date": "8/2/3",
+    "StudentID": ["0812110205101017", "0812110105101027", "0812110105101020"],
+    "Present": [
+      { "studentID": "0812110205101017", "status": false },
+      { "studentID": "0812110105101027", "status": false },
+      { "studentID": "0812110105101020", "status": true }
+    ],
+    "studentSignature": [
+      { "studentID": "0812110205101017", "signature": "" },
+      { "studentID": "0812110105101027", "signature": "" },
+      { "studentID": "0812110105101020", "signature": "" }
+    ],
+    "supervisorComments": [
+      { "studentID": "0812110205101017", "comment": "Absent" },
+      { "studentID": "0812110105101027", "comment": "Absent" },
+      { "studentID": "0812110105101020", "comment": "Alone but active" }
+    ],
+    "remarks": [
+      { "studentID": "0812110205101017", "remarks": "Warned" },
+      { "studentID": "0812110105101027", "remarks": "Notify guardians" },
+      { "studentID": "0812110105101020", "remarks": "" }
+    ]
+  },
+  {
+    "week": 9,
+    "Date": "9/2/3",
+    "StudentID": ["0812110205101017", "0812110105101027", "0812110105101020"],
+    "Present": [
+      { "studentID": "0812110205101017", "status": true },
+      { "studentID": "0812110105101027", "status": true },
+      { "studentID": "0812110105101020", "status": true }
+    ],
+    "studentSignature": [
+      { "studentID": "0812110205101017", "signature": "" },
+      { "studentID": "0812110105101027", "signature": "" },
+      { "studentID": "0812110105101020", "signature": "" }
+    ],
+    "supervisorComments": [
+      { "studentID": "0812110205101017", "comment": "Good" },
+      { "studentID": "0812110105101027", "comment": "Participated well" },
+      { "studentID": "0812110105101020", "comment": "Great response" }
+    ],
+    "remarks": [
+      { "studentID": "0812110205101017", "remarks": "" },
+      { "studentID": "0812110105101027", "remarks": "" },
+      { "studentID": "0812110105101020", "remarks": "" }
+    ]
+  },
+  {
+    "week": 10,
+    "Date": "10/2/3",
+    "StudentID": ["0812110205101017", "0812110105101027", "0812110105101020"],
+    "Present": [
+      { "studentID": "0812110205101017", "status": true },
+      { "studentID": "0812110105101027", "status": false },
+      { "studentID": "0812110105101020", "status": true }
+    ],
+    "studentSignature": [
+      { "studentID": "0812110205101017", "signature": "" },
+      { "studentID": "0812110105101027", "signature": "" },
+      { "studentID": "0812110105101020", "signature": "" }
+    ],
+    "supervisorComments": [
+      { "studentID": "0812110205101017", "comment": "Consistent" },
+      { "studentID": "0812110105101027", "comment": "Absent again" },
+      { "studentID": "0812110105101020", "comment": "Focused" }
+    ],
+    "remarks": [
+      { "studentID": "0812110205101017", "remarks": "" },
+      { "studentID": "0812110105101027", "remarks": "Needs improvement" },
+      { "studentID": "0812110105101020", "remarks": "" }
+    ]
+  },
+
+  {
+    "week": 1,
+    "Date": "1/2/3",
+    "StudentID": ["0812110205101017", "0812110105101027", "0812110105101020"],
+    "Present": [
+      { "studentID": "0812110205101017", "status": true },
+      { "studentID": "0812110105101027", "status": true },
+      { "studentID": "0812110105101020", "status": false }
+    ],
+    "studentSignature": [
+      { "studentID": "0812110205101017", "signature": "" },
+      { "studentID": "0812110105101027", "signature": "" },
+      { "studentID": "0812110105101020", "signature": "" }
+    ],
+    "supervisorComments": [
+      { "studentID": "0812110205101017", "comment": "Good Student" },
+      { "studentId": "0812110105101027", "comment": "Average student" },
+      { "studentId": "0812110105101020", "comment": "Absent today" }
+    ],
+    "remarks": [
+      { "studentID": "0812110205101017", "remarks": "" },
+      { "studentID": "0812110105101027", "remarks": "" },
+      { "studentID": "0812110105101020", "remarks": "" }
+    ]
+  },
+  {
+    "week": 2,
+    "Date": "2/2/3",
+    "StudentID": ["0812110205101017", "0812110105101027", "0812110105101020"],
+    "Present": [
+      { "studentID": "0812110205101017", "status": false },
+      { "studentID": "0812110105101027", "status": true },
+      { "studentID": "0812110105101020", "status": true }
+    ],
+    "studentSignature": [
+      { "studentID": "0812110205101017", "signature": "" },
+      { "studentID": "0812110105101027", "signature": "" },
+      { "studentID": "0812110105101020", "signature": "" }
+    ],
+    "supervisorComments": [
+      { "studentID": "0812110205101017", "comment": "Absent today" },
+      { "studenID": "0812110105101027", "comment": "Improving" },
+      { "studenID": "0812110105101020", "comment": "Good effort" }
+    ],
+    "remarks": [
+      { "studenID": "0812110205101017", "remarks": "Needs to catch up" },
+      { "studenID": "0812110105101027", "remarks": "" },
+      { "studenID": "0812110105101020", "remarks": "" }
+    ]
+  },
+  {
+    "week": 3,
+    "Date": "3/2/3",
+    "StudentID": ["0812110205101017", "0812110105101027", "0812110105101020"],
+    "Present": [
+      { "studentID": "0812110205101017", "status": true },
+      { "studentID": "0812110105101027", "status": false },
+      { "studentID": "0812110105101020", "status": true }
+    ],
+    "studentSignature": [
+      { "studentID": "0812110205101017", "signature": "" },
+      { "studentID": "0812110105101027", "signature": "" },
+      { "studentID": "0812110105101020", "signature": "" }
+    ],
+    "supervisorComments": [
+      { "studentID": "0812110205101017", "comment": "Very attentive" },
+      { "studenID": "0812110105101027", "comment": "Absent today" },
+      { "studenID": "0812110105101020", "comment": "Good" }
+    ],
+    "remarks": [
+      { "studenID": "0812110205101017", "remarks": "" },
+      { "studenID": "0812110105101027", "remarks": "Uninformed absence" },
+      { "studenID": "0812110105101020", "remarks": "" }
+    ]
+  },
+  {
+    "week": 4,
+    "Date": "4/2/3",
+    "StudentID": ["0812110205101017", "0812110105101027", "0812110105101020"],
+    "Present": [
+      { "studentID": "0812110205101017", "status": true },
+      { "studentID": "0812110105101027", "status": true },
+      { "studentID": "0812110105101020", "status": true }
+    ],
+    "studentSignature": [
+      { "studentID": "0812110205101017", "signature": "" },
+      { "studentID": "0812110105101027", "signature": "" },
+      { "studentID": "0812110105101020", "signature": "" }
+    ],
+    "supervisorComments": [
+      { "studentID": "0812110205101017", "comment": "Excellent" },
+      { "studenID": "0812110105101027", "comment": "Good" },
+      { "studenID": "0812110105101020", "comment": "Great job" }
+    ],
+    "remarks": [
+      { "studenID": "0812110205101017", "remarks": "" },
+      { "studenID": "0812110105101027", "remarks": "" },
+      { "studenID": "0812110105101020", "remarks": "" }
+    ]
+  },
+  {
+    "week": 5,
+    "Date": "5/2/3",
+    "StudentID": ["0812110205101017", "0812110105101027", "0812110105101020"],
+    "Present": [
+      { "studentID": "0812110205101017", "status": true },
+      { "studentID": "0812110105101027", "status": false },
+      { "studentID": "0812110105101020", "status": false }
+    ],
+    "studentSignature": [
+      { "studentID": "0812110205101017", "signature": "" },
+      { "studentID": "0812110105101027", "signature": "" },
+      { "studentID": "0812110105101020", "signature": "" }
+    ],
+    "supervisorComments": [
+      { "studentID": "0812110205101017", "comment": "Only one present" },
+      { "studenID": "0812110105101027", "comment": "Missed class" },
+      { "studenID": "0812110105101020", "comment": "Absent today" }
+    ],
+    "remarks": [
+      { "studenID": "0812110205101017", "remarks": "" },
+      { "studenID": "0812110105101027", "remarks": "Needs follow-up" },
+      { "studenID": "0812110105101020", "remarks": "Warned" }
+    ]
+  },
+  {
+    "week": 6,
+    "Date": "6/2/3",
+    "StudentID": ["0812110205101017", "0812110105101027", "0812110105101020"],
+    "Present": [
+      { "studentID": "0812110205101017", "status": false },
+      { "studentID": "0812110105101027", "status": true },
+      { "studentID": "0812110105101020", "status": false }
+    ],
+    "studentSignature": [
+      { "studentID": "0812110205101017", "signature": "" },
+      { "studentID": "0812110105101027", "signature": "" },
+      { "studentID": "0812110105101020", "signature": "" }
+    ],
+    "supervisorComments": [
+      { "studentID": "0812110205101017", "comment": "Sick leave" },
+      { "studentID": "0812110105101027", "comment": "Did well" },
+      { "studenID": "0812110105101020", "comment": "Absent" }
+    ],
+    "remarks": [
+      {
+        "studentID": "0812110205101017",
+        "remarks": "Medical certificate needed"
+      },
+      { "studentID": "0812110105101027", "remarks": "" },
+      { "studentID": "0812110105101020", "remarks": "Repeated absence" }
+    ]
+  },
+  {
+    "week": 7,
+    "Date": "7/2/3",
+    "StudentID": ["0812110205101017", "0812110105101027", "0812110105101020"],
+    "Present": [
+      { "studentID": "0812110205101017", "status": true },
+      { "studentID": "0812110105101027", "status": true },
+      { "studentID": "0812110105101020", "status": true }
+    ],
+    "studentSignature": [
+      { "studentID": "0812110205101017", "signature": "" },
+      { "studentID": "0812110105101027", "signature": "" },
+      { "studentID": "0812110105101020", "signature": "" }
+    ],
+    "supervisorComments": [
+      { "studentID": "0812110205101017", "comment": "Back on track" },
+      { "studentID": "0812110105101027", "comment": "Consistent" },
+      { "studentID": "0812110105101020", "comment": "Improved" }
+    ],
+    "remarks": [
+      { "studentID": "0812110205101017", "remarks": "" },
+      { "studentID": "0812110105101027", "remarks": "" },
+      { "studentID": "0812110105101020", "remarks": "" }
+    ]
+  },
+  {
+    "week": 8,
+    "Date": "8/2/3",
+    "StudentID": ["0812110205101017", "0812110105101027", "0812110105101020"],
+    "Present": [
+      { "studentID": "0812110205101017", "status": false },
+      { "studentID": "0812110105101027", "status": false },
+      { "studentID": "0812110105101020", "status": true }
+    ],
+    "studentSignature": [
+      { "studentID": "0812110205101017", "signature": "" },
+      { "studentID": "0812110105101027", "signature": "" },
+      { "studentID": "0812110105101020", "signature": "" }
+    ],
+    "supervisorComments": [
+      { "studentID": "0812110205101017", "comment": "Absent" },
+      { "studentID": "0812110105101027", "comment": "Absent" },
+      { "studentID": "0812110105101020", "comment": "Alone but active" }
+    ],
+    "remarks": [
+      { "studentID": "0812110205101017", "remarks": "Warned" },
+      { "studentID": "0812110105101027", "remarks": "Notify guardians" },
+      { "studentID": "0812110105101020", "remarks": "" }
+    ]
+  },
+  {
+    "week": 9,
+    "Date": "9/2/3",
+    "StudentID": ["0812110205101017", "0812110105101027", "0812110105101020"],
+    "Present": [
+      { "studentID": "0812110205101017", "status": true },
+      { "studentID": "0812110105101027", "status": true },
+      { "studentID": "0812110105101020", "status": true }
+    ],
+    "studentSignature": [
+      { "studentID": "0812110205101017", "signature": "" },
+      { "studentID": "0812110105101027", "signature": "" },
+      { "studentID": "0812110105101020", "signature": "" }
+    ],
+    "supervisorComments": [
+      { "studentID": "0812110205101017", "comment": "Good" },
+      { "studentID": "0812110105101027", "comment": "Participated well" },
+      { "studentID": "0812110105101020", "comment": "Great response" }
+    ],
+    "remarks": [
+      { "studentID": "0812110205101017", "remarks": "" },
+      { "studentID": "0812110105101027", "remarks": "" },
+      { "studentID": "0812110105101020", "remarks": "" }
+    ]
+  },
+  {
+    "week": 10,
+    "Date": "10/2/3",
+    "StudentID": ["0812110205101017", "0812110105101027", "0812110105101020"],
+    "Present": [
+      { "studentID": "0812110205101017", "status": true },
+      { "studentID": "0812110105101027", "status": false },
+      { "studentID": "0812110105101020", "status": true }
+    ],
+    "studentSignature": [
+      { "studentID": "0812110205101017", "signature": "" },
+      { "studentID": "0812110105101027", "signature": "" },
+      { "studentID": "0812110105101020", "signature": "" }
+    ],
+    "supervisorComments": [
+      { "studentID": "0812110205101017", "comment": "Consistent" },
+      { "studentID": "0812110105101027", "comment": "Absent again" },
+      { "studentID": "0812110105101020", "comment": "Focused" }
+    ],
+    "remarks": [
+      { "studentID": "0812110205101017", "remarks": "" },
+      { "studentID": "0812110105101027", "remarks": "Needs improvement" },
+      { "studentID": "0812110105101020", "remarks": "" }
+    ]
+  },
+  {
+    "week": 10,
+    "Date": "10/2/3",
+    "StudentID": ["0812110205101017", "0812110105101027", "0812110105101020"],
+    "Present": [
+      { "studentID": "0812110205101017", "status": true },
+      { "studentID": "0812110105101027", "status": false },
+      { "studentID": "0812110105101020", "status": true }
+    ],
+    "studentSignature": [
+      { "studentID": "0812110205101017", "signature": "" },
+      { "studentID": "0812110105101027", "signature": "" },
+      { "studentID": "0812110105101020", "signature": "" }
+    ],
+    "supervisorComments": [
+      { "studentID": "0812110205101017", "comment": "Consistent" },
+      { "studentID": "0812110105101027", "comment": "Absent again" },
+      { "studentID": "0812110105101020", "comment": "Focused" }
+    ],
+    "remarks": [
+      { "studentID": "0812110205101017", "remarks": "" },
+      { "studentID": "0812110105101027", "remarks": "Needs improvement" },
+      { "studentID": "0812110105101020", "remarks": "" }
+    ]
+  }
+]
