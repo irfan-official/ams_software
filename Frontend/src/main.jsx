@@ -6,6 +6,8 @@ import "./index.css";
 import App from "./App.jsx";
 import Report from "./Report.jsx";
 import Create from "./Create.jsx";
+import SigninTeacher from "./SigninTeacher.jsx";
+import SignupTeacher from "./SignupTeacher.jsx"
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -17,9 +19,9 @@ createRoot(document.getElementById("root")).render(
         <Route path="/all/group" element={<App />} />
         <Route path="/create/group" element={<Create />} />
         <Route path="/extend/group" element={<Create />} />
-        <Route path="/login/teacher" element={<App />} />
+        <Route path="/login/teacher" element={< SigninTeacher/>} />
         <Route path="/login/student" element={<App />} />
-        <Route path="/register/teacher" element={<App />} />
+        <Route path="/register/teacher" element={<SignupTeacher />} />
         <Route path="/register/student" element={<App />} />
       </Routes>
     </BrowserRouter>
