@@ -1,7 +1,7 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 
-function SigninTeacher() {
+function LoginTeacher() {
   return (
     
 
@@ -73,5 +73,5 @@ function SigninTeacher() {
   )
 }
 
-export default SigninTeacher
+export default LoginTeacher
 

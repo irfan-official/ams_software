@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import { NavLink } from 'react-router-dom'
 
-function SignupTeacher() {
+function RegisterTeacher() {
 
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
@@ -124,4 +124,4 @@ function SignupTeacher() {
   )
 }
 
-export default SignupTeacher
+export default RegisterTeacher
