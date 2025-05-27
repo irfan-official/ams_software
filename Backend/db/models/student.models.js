@@ -12,11 +12,20 @@ const studentScheam = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    couseType: {
+    batch: {
+      type: Number,
+      required: true,
+      trim: true,
+    },
+    department: {
       type: String,
       required: true,
       trim: true,
-      enum: ["Thesis", "IDP"],
+    },
+    password: {
+      type: String,
+      required: true,
+      trim: true,
     },
   },
   { timestamps: true }

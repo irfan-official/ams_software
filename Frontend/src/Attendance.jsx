@@ -21,27 +21,45 @@ function Attendance(data = {}) {
         <tbody className="">
             {
               Sdata.map(({week, Date, StudentID, Present, studentSignature, supervisorComments, remarks}, index) => 
-          <tr className="border-black border-b-3">
+          <tr className="border-black sm:border-b-2 xl:border-b-3">
             <td className="border border-black align-middle  p-2"><h2 className="p-2">{week}.</h2></td>
             <td className="border border-black align-middle p-2"><h2 className="p-2">{Date}</h2></td>
             <td className="border border-black align-middle">
-              {
-                StudentID.map((ID, index) => <><h3 className="p-2 h-10">{ID}</h3> {index+1 != StudentID.length ? <hr/> : <></>} </>)
-              }
+            <td className="align-middle flex flex-col">
+                    {Present.map(({ studentID, status }, index) => (
+                      <>
+                        <h3 className="p-2 h-10 flex item-center">
+                          <p className="flex items-center justify-center text-center">
+                            {studentID}
+                          </p>
+                          {status ? (
+                            <></>
+                          ) : (
+                            <p className="flex items-center justify-center text-center  ml-1">
+                              {" "}
+                              (A)
+                            </p>
+                          )}
+  
+                        </h3>
+                        {index + 1 != Present.length ? <hr /> : <></>}{" "}
+                      </>
+                    ))}
+                  </td>
               </td>
             <td className="border border-black align-top ">
               {
-                studentSignature.map(({studentID, signature}, index) => <><h3 className=" p-2 h-10">{signature}</h3> {index+1 != StudentID.length ? <hr/> : <></>} </>)
+                studentSignature.map(({studentID, signature}, index) => <><h3 className=" p-2 h-10">{signature}</h3> {index+1 != studentSignature.length ? <hr/> : <></>} </>)
               }
             </td>
             <td className="border border-black align-top">
                           {
-                supervisorComments.map(({studentID, comment}, index) => <><h3 className="p-2 h-10">{comment}</h3> {index+1 != StudentID.length ? <hr/> : <></>} </>)
+                supervisorComments.map(({studentID, comment}, index) => <><h3 className="p-2 h-10">{comment}</h3> {index+1 != supervisorComments.length ? <hr/> : <></>} </>)
               }
             </td>
             <td className="border border-black align-top">
                           {
-                remarks.map(({studentID, remarks}, index) => <><h3 className="p-2 h-10">{remarks}</h3> {index+1 != StudentID.length ? <hr/> : <></>} </>)
+                remarks.map(({studentID, remarks}, index) => <><h3 className="p-2 h-10">{remarks}</h3> {index+1 != remarks.length ? <hr/> : <></>} </>)
               }
             </td>
           </tr>)
@@ -54,16 +72,3 @@ function Attendance(data = {}) {
 
 export default Attendance;
 
-
-          // <tr>
-          //   <td className="border border-black align-top p-2">1.</td>
-          //   <td className="border border-black align-top p-2"></td>
-          //   <td className="border border-black align-top">
-          //     0812110205101017
-          //     <hr />
-          //     0812110105101027
-          //     </td>
-          //   <td className="border border-black align-top p-2"></td>
-          //   <td className="border border-black align-top p-2"></td>
-          //   <td className="border border-black align-top p-2"></td>
-          // </tr>

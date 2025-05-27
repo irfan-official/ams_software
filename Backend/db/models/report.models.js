@@ -7,16 +7,37 @@ const reportModel = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    date: {
-      type: String,
+    Date: {
+      type: Date,
       required: true,
       trim: true,
     },
-    present: [
+    studentID: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Student",
-        status: Boolean,
+        type: String,
+        required: true,
+        trim: true,
+      },
+    ],
+    studentSignature: [
+      {
+        type: String,
+        defaullt: "",
+        trim: true,
+      },
+    ],
+    supervisorComments: [
+      {
+        type: String,
+        defaullt: "",
+        trim: true,
+      },
+    ],
+    remarks: [
+      {
+        type: String,
+        defaullt: "",
+        trim: true,
       },
     ],
   },

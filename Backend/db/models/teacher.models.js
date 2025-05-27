@@ -7,6 +7,11 @@ const teacherSchema = mongoose.Schema(
       required: true,
       trim: true,
     },
+    dept: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     email: {
       type: String,
       required: true,
@@ -17,7 +22,6 @@ const teacherSchema = mongoose.Schema(
       required: true,
       trim: true,
     },
-    teacher,
   },
   { Timestamp: true }
 );
