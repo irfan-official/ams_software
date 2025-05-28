@@ -8,12 +8,13 @@ import Report from "./Report.jsx";
 import Create from "./Create.jsx";
 import LoginTeacher from "./LoginTeacher.jsx";
 import RegisterTeacher from "./RegisterTeacher.jsx"
+import Home from "./Home.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<App />} />
+        <Route path="/" element={<Home />} />
         <Route path="/overview" element={<App />} />
         <Route path="/report" element={<Report />} />
         <Route path="/all/group" element={<App />} />

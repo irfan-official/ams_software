@@ -12,6 +12,20 @@ function RegisterTeacher() {
     
   }, [])
 
+    async function handleSubmit(e){
+       e.preventDefault(); 
+
+       if(!name || !email || !dept || !password){
+        alert("all fields are required")
+        return;
+       }
+
+        let obj = {name, email, dept, password}
+        console.log(obj)
+
+       let response = await axios.post('')
+  }
+
   return (
     
 <div className="w-full min-h-screen flex items-center justify-center bg-gray-100">
@@ -22,7 +36,8 @@ function RegisterTeacher() {
       <p className="mt-2 text-gray-500">Register below to access your account</p>
     </div>
     <div className="mt-5">
-      <form action="">
+      <form onSubmit={handleSubmit}>
+        
         <div className="relative mt-6">
           <input
           onChange={(e) => setName(e.target.value)}
@@ -30,6 +45,7 @@ function RegisterTeacher() {
             type="name"
             name="name"
             id="name"
+            required
             placeholder="name"
             className="peer mt-1 w-full border-b-2 border-gray-300 px-0 py-1 placeholder:text-transparent focus:border-gray-500 focus:outline-none"
           />
@@ -47,6 +63,7 @@ function RegisterTeacher() {
             type="email"
             name="email"
             id="email"
+            required
             placeholder="Email Address"
             className="peer mt-1 w-full border-b-2 border-gray-300 px-0 py-1 placeholder:text-transparent focus:border-gray-500 focus:outline-none"
             autoComplete="off"
@@ -62,6 +79,7 @@ function RegisterTeacher() {
   <select
     id="dept"
     name="dept"
+    required
     value={dept}
     onChange={(e) => setDept(e.target.value)}
     className="peer mt-1 w-full border-b-2 border-gray-300 bg-transparent px-0 py-1 text-gray-900 focus:border-gray-500 focus:outline-none"
@@ -84,6 +102,7 @@ function RegisterTeacher() {
           <input
           onChange={(e) => setPassword(e.target.value)}
            value={password}
+            reqired
             type="password"
             name="password"
             id="password"
@@ -99,6 +118,7 @@ function RegisterTeacher() {
         </div>
         <div className="my-6">
           <button
+
             type="submit"
             className="w-full rounded-md bg-black px-3 py-4 text-white focus:bg-gray-600 focus:outline-none"
           >

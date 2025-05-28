@@ -1,10 +1,27 @@
-import React from 'react'
+import React,{useState, useEffect} from 'react'
 import { NavLink } from 'react-router-dom'
+import axios from "axios"
 
 function LoginTeacher() {
+
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+
+  async function handleSubmit(e){
+       e.preventDefault(); 
+
+       if(!email || !password){
+        alert("email and password are required")
+        return;
+       }
+       let obj = {email, password}
+        console.log(obj)
+
+       let response = await axios.post('')
+  }
+
   return (
     
-
 <div className="w-full min-h-screen flex items-center justify-center bg-slate-100">
   <div className="relative mx-auto w-full max-w-md bg-white px-6 pt-10 pb-8 shadow-xl ring-1 ring-gray-900/5 sm:rounded-xl sm:px-10">
   <div className="w-full">
@@ -13,12 +30,15 @@ function LoginTeacher() {
       <p className="mt-2 text-gray-500">Login below to access your account</p>
     </div>
     <div className="mt-5">
-      <form action="">
+      <form onSubmit={handleSubmit}>
         <div className="relative mt-6">
           <input
+          onChange={(e) => setEmail(e.target.value)}
             type="email"
             name="email"
             id="email"
+            value={email}
+            required
             placeholder="Email Address"
             className="peer mt-1 w-full border-b-2 border-gray-300 px-0 py-1 placeholder:text-transparent focus:border-gray-500 focus:outline-none"
             autoComplete="off"
@@ -32,9 +52,12 @@ function LoginTeacher() {
         </div>
         <div className="relative mt-6">
           <input
+           onChange={(e) => setPassword(e.target.value)}
             type="password"
             name="password"
             id="password"
+            required
+            value={password}
             placeholder="Password"
             className="peer mt-1 w-full border-b-2 border-gray-300 px-0 py-1 placeholder:text-transparent focus:border-gray-500 focus:outline-none"
           />
