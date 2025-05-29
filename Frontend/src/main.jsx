@@ -10,6 +10,7 @@ import RegisterTeacher from "./RegisterTeacher.jsx"
 import Overview from "./Overview.jsx";
 import CreateGroup from "./createGroup.jsx";
 import UpdateGroup from "./UpdateGroup.jsx";
+import ExtendGroup from "./ExtendGroup.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -20,9 +21,11 @@ createRoot(document.getElementById("root")).render(
         <Route path="/report" element={<Report />} />
         <Route path="/create/group" element={<CreateGroup />} />
         <Route path="/update/group" element={<UpdateGroup />} />
-        {/* <Route path="/extend/group" element={<Create />} /> */}
+        <Route path="/extend/group" element={<ExtendGroup />} />
         <Route path="/login/teacher" element={< LoginTeacher/>} />
         <Route path="/register/teacher" element={<RegisterTeacher />} />
+
+
         <Route path="/login/student" element={<App />} />
         <Route path="/register/student" element={<App />} />
       </Routes>
