@@ -51,10 +51,10 @@ function App() {
             <div className=" w-full my-10 mt-20 flex items-center justify-center flex-col gap-4 ">
               {
                 allGroup.map((elem, index) => {
-                  return <NavLink className={`w-[60%] px-4 py-3 ${del.index === index ? "bg-red-800 text-white" : ""} bg-gray-400 flex justify-between items-center rounded-md border border-gray-200 shadow-[0_2px_6px_rgba(0,0,0,0.3)] `}>
+                  return <NavLink to={`/overview`} className={`w-[60%] px-4 py-3 ${del.index === index ? "bg-red-800 text-white" : ""} bg-gray-400 flex justify-between items-center rounded-md border border-gray-200 shadow-[0_2px_6px_rgba(0,0,0,0.3)] `}>
                     <h6 className='w-[70%]'>{elem.groupName}</h6>
                     <div className="w-[13%] h-full flex items-center justify-between px-3">
-                      <NavLink to="/update/group" className="scale-150 hover:text-blue-700"><FaRegEdit /></NavLink>
+                      <NavLink to="/update/group" className="scale-150 hover:text-white"><FaRegEdit /></NavLink>
                       <button onClick={() => {
                         setDelete((prev) => ({...prev, groupName: elem.groupName, groupTypes: elem.groupTypes,  clickStatus: !prev.clickStatus, index: index}))
                       }} className="scale-[155%] hover:text-red-600"><RiDeleteBinLine /></button>

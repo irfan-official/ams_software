@@ -22,19 +22,36 @@ function Overview() {
     }
   }, [cpySdata])
 
+  function CSS(index = 0, Present_length = 0) {
+    return {
+      tdCSS: "h-30 align-middle p-2 border border-gray-300",
+
+      inputBox: "border-none w-full h-full pl-2 focus:bg-gray-500 focus:outline-0 focus:text-white shadow-[0_2px_6px_rgba(0,0,0,0.4)] rounded-md hover:bg-slate-200",
+
+      h3: `h-9 flex justify-between shadow-[0_2px_6px_rgba(0,0,0,0.4)] rounded-md hover:bg-slate-200 border border-gray-300 ${index + 1 != Present_length ? "mb-1" : ""}`,
+
+      p: "flex items-center justify-center text-center",
+
+      inputBox1: "border-none w-full h-full rounded-md pl-2 focus:bg-gray-500 focus:outline-0 focus:text-white",
+
+      AddCss: "w-full h-10 flex items-center justify-center mt-2 mb-7 border border-gray-300 rounded-md hover:bg-slate-200 shadow-[0_2px_6px_rgba(0,0,0,0.5)]"
+    }
+  }
 
   function changeIT(name, index_1, e) {
     setCPYSdata((prev) => prev.map((item, index_2) => index_1 === index_2 ? { ...item, [name]: e.target.value.trim() } : item))
   }
+
+
   return (
-    <div className="w-full min-h-screen flex items-center justify-center">
+    <div className="w-full min-h-screen flex items-center justify-center bg-gray-50">
       <form className="w-[90%]" >
         <div className="overflow-x-auto p-4 w-full ">
           <table className="table-auto border border-black w-full xl:text-[1vw] sm:text-[2vw]">
             <caption className="sm:text-[3vw] xl:text-[1.5vw] sm:mb-4 xl:mb-8">
               <strong>
-                <u className="">
-                  Progress Report for “Thesis Title” (8th semister)
+                <u>
+                  {"Thesis Title"} (8th semister)
                 </u>
               </strong>
             </caption>
@@ -63,9 +80,9 @@ function Overview() {
                   },
                   index_1
                 ) => (
-                  <tr className=" ">
+                  <tr key={index_1} className=" ">
 
-                    <td className=" h-30 align-middle p-2 border border-gray-300 ">
+                    <td className={CSS().tdCSS}>
                       <input onChange={(e) => {
                         changeIT("week", index_1, e);
 
@@ -79,56 +96,54 @@ function Overview() {
                           setCPYSdata((prev) => [...prev].sort((a, b) => a.week - b.week));
                         }, 7000);
 
-                      }} className="border-none w-full h-full pl-2 focus:bg-gray-500 focus:outline-0 focus:text-white shadow-[0_2px_6px_rgba(0,0,0,0.4)] rounded-md hover:bg-slate-200 " type="text" value={week} />
+                      }} className={CSS().inputBox} type="text" value={week} />
                     </td>
-                    <td className=" h-30 align-middle p-2 border border-gray-300  ">
-                      <input onChange={(e) => { changeIT("Date", index_1, e) }} className="border-none w-full h-full pl-2 focus:bg-gray-500 focus:outline-0 focus:text-white shadow-[0_2px_6px_rgba(0,0,0,0.4)] rounded-md hover:bg-slate-200" type="text" value={date} />
+                    <td className={CSS().tdCSS}>
+                      <input onChange={(e) => { changeIT("Date", index_1, e) }} className={CSS().inputBox} type="text" value={date} />
                     </td>
-                    <td className="h-30 align-middle p-2 border border-gray-300">
+                    <td className={CSS().tdCSS}>
                       {Present.map(({ studentID, status }, index) => (
-                        <>
-                          <h3 className={`p-2 h-9 flex justify-between shadow-[0_2px_6px_rgba(0,0,0,0.4)] rounded-md hover:bg-slate-200 border border-gray-300 ${index + 1 != Present.length ? "mb-1" : ""}`}>
-                            <p className="flex items-center justify-center text-center">
-                              {studentID}
-                            </p>
-                            <input
-                              className="w-5"
-                              type="checkbox"
-                              checked={status}
-                              onChange={(e) => {
-                                const checked = e.target.checked;
-                                setCPYSdata((prev) =>
-                                  prev.map((item, weekIndex) => {
-                                    if (weekIndex === index_1) {
-                                      return {
-                                        ...item,
-                                        Present: item.Present.map((pItem, studentIndex) =>
-                                          studentIndex === index ? { ...pItem, status: checked } : pItem
-                                        ),
-                                      };
-                                    }
-                                    return item;
-                                  })
-                                );
-                              }}
-                            />
+                        <h3 key={index} className={`${CSS(index, Present.length).h3} p-2`}>
+                          <p className={CSS().p}>
+                            {studentID}
+                          </p>
+                          <input
+                            className="w-5"
+                            type="checkbox"
+                            checked={status}
+                            onChange={(e) => {
+                              const checked = e.target.checked;
+                              setCPYSdata((prev) =>
+                                prev.map((item, weekIndex) => {
+                                  if (weekIndex === index_1) {
+                                    return {
+                                      ...item,
+                                      Present: item.Present.map((pItem, studentIndex) =>
+                                        studentIndex === index ? { ...pItem, status: checked } : pItem
+                                      ),
+                                    };
+                                  }
+                                  return item;
+                                })
+                              );
+                            }}
+                          />
 
-                          </h3>
-
-                        </>
+                        </h3>
                       ))}
                     </td>
-                    <td className="h-30 align-middle p-2 border border-gray-300 ">
+                    <td className={CSS().tdCSS}>
                       {studentSignature.map(({ studentID, signature }, index) => (
-                        <>
-                          <h3 className={`p-2 h-9 flex justify-between shadow-[0_2px_6px_rgba(0,0,0,0.4)] rounded-md hover:bg-slate-200 border border-gray-300 ${index + 1 != Present.length ? "mb-1" : ""}`}>{signature}</h3>
-                        </>
+
+                        <h3 key={index} className={CSS(index, Present.length).h3}>{signature}</h3>
+
                       ))}
                     </td>
-                    <td className="h-30 align-middle p-2 border border-gray-300">
+                    <td className={CSS().tdCSS}>
                       {supervisorComments.map(({ studentID, comment }, index) => (
-                        <>
-                          <h3 className={`h-9 flex justify-between shadow-[0_2px_6px_rgba(0,0,0,0.4)] rounded-md hover:bg-slate-200 border border-gray-300 ${index + 1 != Present.length ? "mb-1" : ""}`}><input type="text"
+
+                        <h3 key={index} className={CSS(index, Present.length).h3}>
+                          <input type="text"
                             onChange={(e) => {
                               const inputvalue = e.target.value;
                               setCPYSdata((prev) =>
@@ -145,34 +160,34 @@ function Overview() {
                                 })
                               );
                             }}
-                            className="border-none w-full h-full rounded-md pl-2 focus:bg-gray-500 focus:outline-0 focus:text-white"
+                            className={CSS().inputBox1}
                             value={comment} /></h3>
-                        </>
+
                       ))}
                     </td>
-                    <td className="h-30 align-middle p-2 border border-gray-300">
+                    <td className={CSS().tdCSS}>
                       {remarks.map(({ studentID, remarks }, index) => (
-                        <>
-                          <h3 className={`h-9 flex justify-between shadow-[0_2px_6px_rgba(0,0,0,0.4)] rounded-md hover:bg-slate-200 border border-gray-300 ${index + 1 != Present.length ? "mb-1" : ""}`}>
-                            <input type="text"
-                              onChange={(e) => {
-                                const inputvalue = e.target.value;
-                                setCPYSdata((prev) =>
-                                  prev.map((item, weekIndex) => {
-                                    if (weekIndex === index_1) {
-                                      return {
-                                        ...item,
-                                        remarks: item.remarks.map((pItem, studentIndex) =>
-                                          studentIndex === index ? { ...pItem, remarks: inputvalue } : pItem
-                                        ),
-                                      };
-                                    }
-                                    return item;
-                                  })
-                                );
-                              }}
-                              className="border-none rounded-md w-full h-full pl-2 focus:bg-gray-500 focus:outline-0 focus:text-white" value={remarks} /></h3>
-                        </>
+
+                        <h3 key={index} className={CSS(index, Present.length).h3}>
+                          <input type="text"
+                            onChange={(e) => {
+                              const inputvalue = e.target.value;
+                              setCPYSdata((prev) =>
+                                prev.map((item, weekIndex) => {
+                                  if (weekIndex === index_1) {
+                                    return {
+                                      ...item,
+                                      remarks: item.remarks.map((pItem, studentIndex) =>
+                                        studentIndex === index ? { ...pItem, remarks: inputvalue } : pItem
+                                      ),
+                                    };
+                                  }
+                                  return item;
+                                })
+                              );
+                            }}
+                            className={CSS().inputBox1} value={remarks} /></h3>
+
                       ))}
                     </td>
                   </tr>
@@ -187,11 +202,8 @@ function Overview() {
               newData.greet();
               setCreatedNewData((prev) => [...prev, newData].sort((a, b) => a.week - b.week))
               setCPYSdata((prev) => [...prev, newData])
-
-
-
             }}
-            className="w-full h-10 flex items-center justify-center mt-2 mb-7 border border-gray-300 rounded-md hover:bg-slate-200 shadow-[0_2px_6px_rgba(0,0,0,0.5)]"><GrAdd /></div>
+            className={CSS().AddCss}><GrAdd /></div>
         </div>
       </form>
     </div>
