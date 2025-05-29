@@ -1,0 +1,72 @@
+[
+  {
+    "supervisor": "664f1c3a2e8a4e6df8aeb111",
+    "groupName": "AI Researchers",
+    "gropMembers": ["664f1c8b3b4d5f7a8c1a1111", "664f1c8b3b4d5f7a8c1a1112"],
+    "groupTypes": "Thesis",
+    "semister": "8"
+  },
+  {
+    "supervisor": "664f1c3a2e8a4e6df8aeb112",
+    "groupName": "IoT Innovators",
+    "gropMembers": ["664f1c8b3b4d5f7a8c1a1113", "664f1c8b3b4d5f7a8c1a1114"],
+    "groupTypes": "IDP",
+    "semister": "7"
+  },
+  {
+    "supervisor": "664f1c3a2e8a4e6df8aeb113",
+    "groupName": "Cyber Knights",
+    "gropMembers": ["664f1c8b3b4d5f7a8c1a1115", "664f1c8b3b4d5f7a8c1a1116"],
+    "groupTypes": "Thesis",
+    "semister": "6"
+  },
+  {
+    "supervisor": "664f1c3a2e8a4e6df8aeb114",
+    "groupName": "Cloud Gurus",
+    "gropMembers": ["664f1c8b3b4d5f7a8c1a1117", "664f1c8b3b4d5f7a8c1a1118"],
+    "groupTypes": "IDP",
+    "semister": "5"
+  },
+  {
+    "supervisor": "664f1c3a2e8a4e6df8aeb115",
+    "groupName": "Blockchain Buffs",
+    "gropMembers": ["664f1c8b3b4d5f7a8c1a1119", "664f1c8b3b4d5f7a8c1a1120"],
+    "groupTypes": "Thesis",
+    "semister": "4"
+  },
+  {
+    "supervisor": "664f1c3a2e8a4e6df8aeb116",
+    "groupName": "DevOps Wizards",
+    "gropMembers": ["664f1c8b3b4d5f7a8c1a1121", "664f1c8b3b4d5f7a8c1a1122"],
+    "groupTypes": "IDP",
+    "semister": "3"
+  },
+  {
+    "supervisor": "664f1c3a2e8a4e6df8aeb117",
+    "groupName": "Data Miners",
+    "gropMembers": ["664f1c8b3b4d5f7a8c1a1123", "664f1c8b3b4d5f7a8c1a1124"],
+    "groupTypes": "Thesis",
+    "semister": "2"
+  },
+  {
+    "supervisor": "664f1c3a2e8a4e6df8aeb118",
+    "groupName": "AR Explorers",
+    "gropMembers": ["664f1c8b3b4d5f7a8c1a1125", "664f1c8b3b4d5f7a8c1a1126"],
+    "groupTypes": "IDP",
+    "semister": "1"
+  },
+  {
+    "supervisor": "664f1c3a2e8a4e6df8aeb119",
+    "groupName": "ML Engineers",
+    "gropMembers": ["664f1c8b3b4d5f7a8c1a1127", "664f1c8b3b4d5f7a8c1a1128"],
+    "groupTypes": "Thesis",
+    "semister": "8"
+  },
+  {
+    "supervisor": "664f1c3a2e8a4e6df8aeb120",
+    "groupName": "Game Dev Squad",
+    "gropMembers": ["664f1c8b3b4d5f7a8c1a1129", "664f1c8b3b4d5f7a8c1a1130"],
+    "groupTypes": "IDP",
+    "semister": "7"
+  }
+]
