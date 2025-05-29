@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom'
 import data from "./seeds/allGroup.json"
 import { FaRegEdit } from "react-icons/fa";
 import { RiDeleteBinLine } from "react-icons/ri";
+import { GrAdd } from "react-icons/gr";
 
 function App() {
   const [allGroup, setAllGroup] = useState(data || []);
@@ -14,8 +15,8 @@ function App() {
     index: null
   })
 
-  function clearDel(){
-    setDelete((prev) => ({...prev, groupName: "", groupTypes: "", clickStatus: false, index: null}))
+  function clearDel() {
+    setDelete((prev) => ({ ...prev, groupName: "", groupTypes: "", clickStatus: false, index: null }))
     return;
   }
 
@@ -30,18 +31,18 @@ function App() {
             <div className='flex w-full justify-center gap-10 px-2'>
               <button onClick={clearDel} className='px-5 py-3 w-28 rounded-md text-center bg-gray-500 text-white [0_2px_6px_rgba(0,0,0,0.9)]'>Back</button>
               <button
-              onClick={() => {
-                console.log("del => ", del)
-                setAllGroup((prev) => prev.filter((item, index) => index != del.index));
-                clearDel()
-              }}
-               className='px-5 py-3 w-28 rounded-md text-center bg-red-500 text-white [0_2px_6px_rgba(0,0,0,0.9)]'>Delete</button>
+                onClick={() => {
+                  console.log("del => ", del)
+                  setAllGroup((prev) => prev.filter((item, index) => index != del.index));
+                  clearDel()
+                }}
+                className='px-5 py-3 w-28 rounded-md text-center bg-red-500 text-white [0_2px_6px_rgba(0,0,0,0.9)]'>Delete</button>
             </div>
           </div>
         </div> : <></>
       }
       {
-         allGroup.length < 1 ? <div className='w-full min-h-[98vh] bg-gray-200 flex items-center justify-center flex-col  gap-6 '>
+        allGroup.length < 1 ? <div className='w-full min-h-[98vh] bg-gray-200 flex items-center justify-center flex-col  gap-6 '>
           <h1 className='text-3xl'>You dont have any group now</h1>
           <h2 className='text-xl'>Create group to see group</h2>
           <NavLink to="/create/group" className='px-4 py-3 bg-gray-600 cursor-pointer text-white rounded-md shadow-[0_2px_6px_rgba(0,0,0,0.4)]'>Create Group</NavLink>
@@ -51,18 +52,27 @@ function App() {
             <div className=" w-full my-10 mt-20 flex items-center justify-center flex-col gap-4 ">
               {
                 allGroup.map((elem, index) => {
-                  return <NavLink to={`/overview`} className={`w-[60%] px-4 py-3 ${del.index === index ? "bg-red-800 text-white" : ""} bg-gray-400 flex justify-between items-center rounded-md border border-gray-200 shadow-[0_2px_6px_rgba(0,0,0,0.3)] `}>
-                    <h6 className='w-[70%]'>{elem.groupName}</h6>
-                    <div className="w-[13%] h-full flex items-center justify-between px-3">
-                      <NavLink to="/update/group" className="scale-150 hover:text-white"><FaRegEdit /></NavLink>
+                  return <div className={`w-[60%] px-4 py-3 ${del.index === index ? "bg-red-800 text-white" : ""} bg-gray-400 hover:bg-gray-500 hover:text-white flex gap-2 items-center rounded-md border border-gray-200 shadow-[0_2px_6px_rgba(0,0,0,0.6)] `}>
+                    <NavLink to={`/overview`} className='w-[90%] '>{elem.groupName}</NavLink>
+                    <div className="w-[10%] h-full flex items-center justify-between px-2 ">
+                      <NavLink to="/update/group" className="scale-150 hover:text-lime-400 "><FaRegEdit /></NavLink>
                       <button onClick={() => {
-                        setDelete((prev) => ({...prev, groupName: elem.groupName, groupTypes: elem.groupTypes,  clickStatus: !prev.clickStatus, index: index}))
-                      }} className="scale-[155%] hover:text-red-600"><RiDeleteBinLine /></button>
+                        setDelete((prev) => ({ ...prev, groupName: elem.groupName, groupTypes: elem.groupTypes, clickStatus: !prev.clickStatus, index: index }))
+                      }} className="scale-[155%] hover:text-red-600  relative z-40 cursor-pointer">
+                        <RiDeleteBinLine />
+                      </button>
                     </div>
 
-                  </NavLink>
+                  </div>
                 })
               }
+              <NavLink
+              to="/create/group"
+                className='w-[60%] mb-16 h-10 flex items-center justify-center border border-gray-100 rounded-md hover:bg-slate-300 shadow-[0_2px_6px_rgba(0,0,0,0.6)] bg-slate-200'>
+                <span className='scale-110'>
+                  <GrAdd />
+                </span>
+              </NavLink>
             </div>
           </>
       }

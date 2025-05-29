@@ -3,6 +3,7 @@ import Sdata from "./seeds/sampleAttandence.json" with { type: "json" };
 import { GrAdd } from "react-icons/gr";
 import showsClass from "./library/shows.js"
 import axios from "axios"
+import { NavLink } from "react-router-dom";
 
 function Overview() {
 
@@ -22,13 +23,19 @@ function Overview() {
     }
   }, [cpySdata])
 
-  function CSS(index = 0, Present_length = 0) {
+
+
+    function CSS(index = 0, Present_length = 0) {
     return {
       tdCSS: "h-30 align-middle p-2 border border-gray-300",
 
-      inputBox: "border-none w-full h-full pl-2 focus:bg-gray-500 focus:outline-0 focus:text-white shadow-[0_2px_6px_rgba(0,0,0,0.4)] rounded-md hover:bg-slate-200",
+      thCSS: "border border-gray-300 p-1 rounded-lg ",
 
-      h3: `h-9 flex justify-between shadow-[0_2px_6px_rgba(0,0,0,0.4)] rounded-md hover:bg-slate-200 border border-gray-300 ${index + 1 != Present_length ? "mb-1" : ""}`,
+      th_h3: "bg-white border border-gray-300 py-3 rounded-md shadow-[0_2px_6px_rgba(0,0,0,0.4)]",
+
+      inputBox: "border-none w-full h-full pl-2 focus:bg-gray-500 focus:outline-0 focus:text-white shadow-[0_2px_6px_rgba(0,0,0,0.4)] rounded-md hover:bg-slate-200 bg-white",
+
+      h3: `h-9 flex justify-between shadow-[0_2px_6px_rgba(0,0,0,0.4)] rounded-md hover:bg-slate-200 border border-gray-300 bg-white ${index + 1 != Present_length ? "mb-1" : ""}`,
 
       p: "flex items-center justify-center text-center",
 
@@ -48,22 +55,31 @@ function Overview() {
       <form className="w-[90%]" >
         <div className="overflow-x-auto p-4 w-full ">
           <table className="table-auto border border-black w-full xl:text-[1vw] sm:text-[2vw]">
-            <caption className="sm:text-[3vw] xl:text-[1.5vw] sm:mb-4 xl:mb-8">
+            <caption className="sm:text-[3vw] xl:text-[1.5vw] sm:mb-4 xl:mb-8 mt-[3.5rem] relative ">
               <strong>
-                <u>
+                <u className="text-3xl">
                   {"Thesis Title"} (8th semister)
                 </u>
               </strong>
+               <NavLink  to="/report" className="px-7 py-3 bg-slate-600 text-white text-[1rem] rounded-md absolute bottom-0 right-5 shadow-[0_2px_6px_rgba(0,0,0,0.4)] border border-gray-300">
+                Report
+              </NavLink>
             </caption>
 
             <thead>
               <tr className="bg-gray-100">
-                <th className="border border-black p-2">Week</th>
-                <th className="border border-black p-2">Date</th>
-                <th className="border border-black p-2">Student ID</th>
-                <th className="border border-black p-2">Student Signature</th>
-                <th className="border border-black p-2">Supervisor's Comments</th>
-                <th className="border border-black p-2">Remarks</th>
+                <th className={CSS().thCSS}>
+                  <h3 className={CSS().th_h3}>
+                    Week
+                  </h3>
+                </th>
+                <th className={CSS().thCSS}>
+                  <h3 className={CSS().th_h3}>Date</h3>
+                </th>
+                <th className={CSS().thCSS}><h3 className={CSS().th_h3}>Student ID</h3></th>
+                <th className={CSS().thCSS}><h3 className={`${CSS().th_h3} px-5`}>Student Signature</h3></th>
+                <th className={CSS().thCSS}><h3 className={CSS().th_h3}>Supervisor's Comments</h3></th>
+                <th className={CSS().thCSS}><h3 className={CSS().th_h3}>Remarks</h3></th>
               </tr>
             </thead>
             <tbody>
@@ -198,7 +214,7 @@ function Overview() {
           </table>
           <div
             onClick={() => {
-              const newData = new showsClass(cpySdata[cpySdata.length - 1].week, cpySdata[cpySdata.length - 1].studentID)
+              const newData = new showsClass(cpySdata[cpySdata.length - 1]?.week || 1, cpySdata[cpySdata.length - 1]?.studentID || ["0812110205101017", "0812110205101027", "0812110205101020"])
               newData.greet();
               setCreatedNewData((prev) => [...prev, newData].sort((a, b) => a.week - b.week))
               setCPYSdata((prev) => [...prev, newData])
