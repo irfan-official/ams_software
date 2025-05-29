@@ -99,7 +99,7 @@ function Overview() {
                       }} className={CSS().inputBox} type="text" value={week} />
                     </td>
                     <td className={CSS().tdCSS}>
-                      <input onChange={(e) => { changeIT("Date", index_1, e) }} className={CSS().inputBox} type="text" value={date} />
+                      <input onChange={(e) => { changeIT("date", index_1, e) }} className={CSS().inputBox} type="text" value={date} />
                     </td>
                     <td className={CSS().tdCSS}>
                       {Present.map(({ studentID, status }, index) => (
