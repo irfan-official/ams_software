@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Rdata from "./seeds/sampleRepresent.json" with { type: "json" };
+import Rdata from "../src/seeds/sampleRepresent.json" with { type: "json" };
 
 function Create() {
   const [week, setWeek] = useState("");

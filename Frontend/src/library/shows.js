@@ -11,24 +11,24 @@ export default class Person {
 
   greet() {
 
-    this.studentID.forEach(eID => {
+    this.studentID.forEach(sID => {
       this.Present.push({
-        studentID: eID,
+        studentID: sID,
         status: true
       });
 
       this.studentSignature.push({
-        studentID: eID,
+        studentID: sID,
         signature: ""
       });
 
       this.supervisorComments.push({
-        studentID: eID,
+        studentID: sID,
         comment: ""
       });
 
       this.remarks.push({
-        studentID: eID,
+        studentID: sID,
         remarks: ""
       });
     });
