@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const teacherSchema = mongoose.Schema(
+const supervisorSchema = mongoose.Schema(
   {
     name: {
       type: String,
@@ -9,6 +9,7 @@ const teacherSchema = mongoose.Schema(
     },
     dept: {
       type: String,
+      enum:["CSE", "EEE", "ICE", "ME", "BBA", "LAW", "ENG"],
       required: true,
       trim: true,
     },
@@ -26,4 +27,4 @@ const teacherSchema = mongoose.Schema(
   { Timestamp: true }
 );
 
-export default Teacher = mongoose.model("Teacher", teacherSchema);
+export default Supervisor = mongoose.model("Supervisor", supervisorSchema);

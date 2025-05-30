@@ -5,26 +5,33 @@ const groupSchema = mongoose.Schema(
     supervisor: {
       type: mongoose.model.Schema.Types,
       ref: "Teacher",
+      required: true,
     },
     groupName: {
-      type: String,
-      required: true,
-      trim: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Title",
+      required: true
     },
-    gropMembers: [
+    gropMembers: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Student",
+      required: true
+    }],
+
+    title: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Student",
-        required: true,
-        trim: true,
+        ref: "Title",
       },
     ],
+
     groupTypes: {
       enum: ["Thesis", "IDP"],
       required: true,
     },
-    groupTitle: {
+    semister: {
       type: String,
+      enum: ["1", "2", "3", "4", "5", "6", "7", "8"],
       required: true,
       trim: true,
     },
