@@ -4,7 +4,8 @@ export default class Person {
     this.date = (new Date()).toLocaleDateString('en-GB'); 
     this.studentID = ID;
     this.Present = [];
-    this.studentSignature = [];
+    this.title = [];
+    this.studentSignature = []
     this.supervisorComments = [];
     this.remarks = [];
   }
@@ -15,6 +16,11 @@ export default class Person {
       this.Present.push({
         studentID: sID,
         status: true
+      });
+
+      this.title.push({
+        studentID: sID,
+        title: ""
       });
 
       this.studentSignature.push({

@@ -51,7 +51,7 @@ function Overview() {
 
 
   return (
-    <div className="w-full min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="w-full min-h-screen flex  justify-center bg-gray-50">
       <form className="w-[90%]" >
         <div className="overflow-x-auto p-4 w-full ">
           <table className="table-auto border border-black w-full xl:text-[1vw] sm:text-[2vw]">
@@ -77,7 +77,7 @@ function Overview() {
                   <h3 className={CSS().th_h3}>Date</h3>
                 </th>
                 <th className={CSS().thCSS}><h3 className={CSS().th_h3}>Student ID</h3></th>
-                <th className={CSS().thCSS}><h3 className={`${CSS().th_h3} px-5`}>Student Signature</h3></th>
+                <th className={CSS().thCSS}><h3 className={`${CSS().th_h3} px-20`}>Title</h3></th>
                 <th className={CSS().thCSS}><h3 className={CSS().th_h3}>Supervisor's Comments</h3></th>
                 <th className={CSS().thCSS}><h3 className={CSS().th_h3}>Remarks</h3></th>
               </tr>
@@ -90,7 +90,7 @@ function Overview() {
                     date,
                     studentID,
                     Present,
-                    studentSignature,
+                    title,
                     supervisorComments,
                     remarks,
                   },
@@ -149,9 +149,29 @@ function Overview() {
                       ))}
                     </td>
                     <td className={CSS().tdCSS}>
-                      {studentSignature.map(({ studentID, signature }, index) => (
+                      {title.map(({ studentID, title }, index) => (
 
-                        <h3 key={index} className={CSS(index, Present.length).h3}>{signature}</h3>
+                        <h3 key={index} className={CSS(index, Present.length).h3}>
+                          <input type="text"
+                            onChange={(e) => {
+                              const inputvalue = e.target.value;
+                              setCPYSdata((prev) =>
+                                prev.map((item, itemIndex) => {
+                                  if (itemIndex === index_1) {
+                                    return {
+                                      ...item,
+                                      title: item.title.map((pItem, studentIndex) =>
+                                        studentIndex === index ? { ...pItem, title: inputvalue } : pItem
+                                      ),
+                                    };
+                                  }
+                                  return item;
+                                })
+                              );
+                            }}
+                            className={CSS().inputBox1}
+                            value={title} />
+                        </h3>
 
                       ))}
                     </td>
@@ -163,8 +183,8 @@ function Overview() {
                             onChange={(e) => {
                               const inputvalue = e.target.value;
                               setCPYSdata((prev) =>
-                                prev.map((item, weekIndex) => {
-                                  if (weekIndex === index_1) {
+                                prev.map((item, itemIndex) => {
+                                  if (itemIndex === index_1) {
                                     return {
                                       ...item,
                                       supervisorComments: item.supervisorComments.map((pItem, studentIndex) =>
@@ -177,7 +197,8 @@ function Overview() {
                               );
                             }}
                             className={CSS().inputBox1}
-                            value={comment} /></h3>
+                            value={comment} />
+                        </h3>
 
                       ))}
                     </td>
