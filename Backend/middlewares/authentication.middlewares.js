@@ -8,50 +8,59 @@ function isValidEmail(email) {
 
 export const RegisterMiddleware = (req, res, next) => {
 
-    let { name, dept, email, password } = req.body;
+    try {
+        let { name, dept, email, password } = req.body;
 
-    name = name.trim();
-    dept = dept.trim();
-    email = email.trim();
-    password = password.trim();
+        name = name?.trim();
+        dept = dept?.trim();
+        email = email?.trim();
+        password = password?.trim();
 
-    if (!name || !dept || !email || !password) {
-        next(new CustomError("All Fields are required",400, Internal))
+        if (!name || !dept || !email || !password) {
+            throw new CustomError("All Fields are required", 400, Internal)
+        }
+
+        if (!isValidEmail(email)) {
+            throw new CustomError("Enter Valid Email Address", 400, Internal)
+        }
+
+        let validDept = ["CSE", "EEE", "ICE", "ME", "BBA", "LAW", "ENG"];
+
+        if (!validDept.includes(dept)) {
+            throw new CustomError("Only CSE, EEE, ICE, ME, BBA, LAW, ENG is allowed for dept"
+                , 400, Internal)
+        }
+
+        req.user = { name, dept, email, password }
+
+        next();
+    } catch (error) {
+        next(error)
     }
-    
-    if (!isValidEmail(email)) {
-        next(new CustomError("Enter Valid Email Address", 400, Internal))
-    }
-    
-    let validDept = ["CSE", "EEE", "ICE", "ME", "BBA", "LAW", "ENG"];
-
-    if (!validDept.includes(dept)) {
-         next(new CustomError("Only CSE, EEE, ICE, ME, BBA, LAW, ENG is allowed for dept",400, Internal))
-    }
-
-    req.user = { name, dept, email, password }
-
-    next();
 
 }
 
 export const LoginMiddleware = (req, res, next) => {
 
-    const { email, password } = req.body;
+    try {
+        let { email, password } = req.body;
 
-    email = email.trim();
-    password = password.trim();
+        email = email?.trim();
+        password = password?.trim();
 
-    if (!email || !password) {
-        next(new CustomError("All Fields are required",400, Internal))
+        if (!email || !password) {
+            throw new CustomError("All Fields are required", 400, Internal)
+        }
+
+        if (!isValidEmail(email)) {
+            throw new CustomError("Enter Valid Email Address", 400, Internal)
+        }
+
+        req.user = { email, password }
+
+        next();
+    } catch (error) {
+        next(error)
     }
-
-    if (!isValidEmail(email)) {
-         next(new CustomError("Enter Valid Email Address", 400, Internal))
-    }
-
-    req.user = { email, password }
-
-    next();
 
 }

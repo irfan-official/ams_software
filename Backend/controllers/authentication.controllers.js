@@ -34,12 +34,15 @@ export const LoginController = async (req, res) => {
         const { email, password } = req.user;
 
         const createdUser = await Supervisor.findOne({
-            name, dept, email, password
+            email
         })
 
         if (!createdUser) {
             return new Error()
         }
+
+        const isMatch = await user.comparePassword(password);
+        if (!isMatch) return res.status(400).json({ error: 'Invalid credentials' });
 
         return res.status(201).json({
             status: true,
