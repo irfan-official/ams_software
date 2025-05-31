@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const titleSchema = mongoose.Schema({
         title: {
-            type: "Schema",
+            type: "String",
             required: true,
             trim: true,
         },
@@ -18,4 +18,5 @@ const titleSchema = mongoose.Schema({
         },
 }, {timestamps: true})
 
-export default Title = mongoose.model("Title", titleSchema)
+const Title = mongoose.model("Title", titleSchema)
+export default Title

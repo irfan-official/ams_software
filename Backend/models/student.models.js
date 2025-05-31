@@ -10,7 +10,6 @@ const studentScheam = new mongoose.Schema(
     signature: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "StudentSignature",
-      default: "",
     },
     associate: [{
       groupName: {
@@ -23,24 +22,10 @@ const studentScheam = new mongoose.Schema(
       }
     }],
 
-    // studentName: {
-    //   type: String,
-    //   trim: true,
-    // },
-    // batch: {
-    //   type: Number,
-    //   trim: true,
-    // },
-    // department: {
-    //   type: String,
-    //   trim: true,
-    // },
-    // password: {
-    //   type: String,
-    //   trim: true,
-    // },
   },
   { timestamps: true }
 );
 
-export default Student = mongoose.model("Student", studentScheam);
+const Student = mongoose.model("Student", studentScheam);
+
+export default  Student

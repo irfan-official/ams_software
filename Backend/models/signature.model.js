@@ -1,15 +1,16 @@
 import mongoose from "mongoose";
 
-const studentSignatureSchema = mongoose.Schema({
-    studentID: {
+const signatureSchema = mongoose.Schema({
+    ID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Student",
         required: true
     },
     signature: {
         type: String,
-        default: "",
+        trim: true,
     }
 },{timestamps: true})
 
-export default StudentSignature = mongoose.model("StudentSignature", studentSignatureSchema)
+const Signature = mongoose.model("Signature", signatureSchema)
+export default  Signature

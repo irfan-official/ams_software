@@ -6,6 +6,7 @@ import authRoute from "./routes/authentication.routes.js"
 import {Internal, External} from "./utils/ErrorTypesCode.js"
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import groupRoute from "./routes/group.routes.js"
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.listen(port, () => {
 
 
 app.use("/auth/api/v1", authRoute)
+app.use("/group/api/v1", groupRoute)
 
 
 app.use((error, req, res, next) => {

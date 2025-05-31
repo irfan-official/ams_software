@@ -2,9 +2,15 @@ import mongoose from "mongoose";
 
 const reportModel = new mongoose.Schema(
   {
-    groupName: {
+    group: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Group", // reffer to the groupName
+      required: true,
+    },
+
+    supervisor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Supervisor", // reffer to the groupName
       required: true,
     },
 
@@ -61,4 +67,6 @@ const reportModel = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default Report = mongoose.model("Report", reportModel);
+const Report = mongoose.model("Report", reportModel);
+
+export default Report

@@ -10,6 +10,10 @@ const supervisorSchema = mongoose.Schema(
       required: true,
       trim: true,
     },
+    groups: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Group",
+  }],
     dept: {
       type: String,
       enum:["CSE", "EEE", "ICE", "ME", "BBA", "LAW", "ENG"],

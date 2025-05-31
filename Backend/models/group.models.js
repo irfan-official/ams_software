@@ -3,29 +3,30 @@ import mongoose from "mongoose";
 const groupSchema = mongoose.Schema(
   {
     supervisor: {
-      type: mongoose.model.Schema.Types,
-      ref: "Teacher",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Supervisor",
       required: true,
     },
-    groupName: {
+    group: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Title",
-      required: true
+      required: true,
     },
-    gropMembers: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Student",
-      required: true
-    }],
-
+    groupMembers: [  
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Student",
+        required: true,
+      },
+    ],
     title: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Title",
       },
     ],
-
-    groupTypes: {
+    groupTypes: {     
+      type: String,
       enum: ["Thesis", "IDP"],
       required: true,
     },
@@ -36,7 +37,7 @@ const groupSchema = mongoose.Schema(
       trim: true,
     },
   },
-  { Timestamp: true }
+  { timestamps: true } 
 );
 
 const Group = mongoose.model("Group", groupSchema);
