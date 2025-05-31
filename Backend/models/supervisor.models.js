@@ -27,4 +27,6 @@ const supervisorSchema = mongoose.Schema(
   { Timestamp: true }
 );
 
-export default Supervisor = mongoose.model("Supervisor", supervisorSchema);
+const Supervisor = mongoose.model("Supervisor", supervisorSchema);
+
+export default Supervisor;
