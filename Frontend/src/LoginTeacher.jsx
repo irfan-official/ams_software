@@ -1,6 +1,7 @@
 import React,{useState, useEffect} from 'react'
 import { NavLink } from 'react-router-dom'
 import axios from "axios"
+import isValidEmail from "./library/validEmailChecker.js"
 
 function LoginTeacher() {
 
@@ -8,16 +9,25 @@ function LoginTeacher() {
   const [password, setPassword] = useState("")
 
   async function handleSubmit(e){
-       e.preventDefault(); 
+    e.preventDefault();
 
-       if(!email || !password){
-        alert("email and password are required")
-        return;
-       }
-       let obj = {email, password}
-        console.log(obj)
+    let obj = {
+      email: email.trim(),
+      password: password.trim()
+    }
 
-       let response = await axios.post('')
+    if (!obj.email || !obj.password) {
+      alert("Email and Password are required")
+      return;
+    }
+    if (!isValidEmail(obj.email)) {
+      alert("Enter a valid Email Address")
+      return;
+    }
+
+    console.log(obj)
+
+    let response = await axios.post('')
   }
 
   return (

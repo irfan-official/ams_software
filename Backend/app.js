@@ -4,8 +4,17 @@ import express, { urlencoded } from "express";
 import dbConnection from "./connection/mongodb.connection.js"
 import authRoute from "./routes/authentication.routes.js"
 import {Internal, External} from "./utils/ErrorTypesCode.js"
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
 
 const app = express();
+
+app.use(cookieParser());
+
+app.use(cors({
+  origin: 'http://localhost:5173', 
+  credentials: true,               
+}));
 
 app.use(express.urlencoded({extended: true}))
 app.use(express.json())
