@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs"
 import { Internal, External } from "../utils/ErrorTypesCode.js";
 import CustomError from "../utils/ErrorHandling.js"
 
@@ -29,10 +30,6 @@ const supervisorSchema = mongoose.Schema(
   { Timestamp: true }
 );
 
-const Supervisor = mongoose.model("Supervisor", supervisorSchema);
-
-export default Supervisor;
-
 
 supervisorSchema.pre('save', async function (next) {
   try {
@@ -55,3 +52,7 @@ supervisorSchema.methods.comparePassword = async function (candidatePassword) {
     throw new CustomError("Password comparison failed", 400, Internal)
   }
 };
+
+const Supervisor = mongoose.model("Supervisor", supervisorSchema);
+
+export default Supervisor;

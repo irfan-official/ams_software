@@ -23,7 +23,7 @@ app.use("/auth/api/v1", authRoute)
 
 app.use((error, req, res, next) => {
   if(error.ErrorTypes = Internal){
-    return res.status(error.statusCode).json(
+    return res.status(error.statusCode || 400).json(
       {
         redirect: false,
         success: false,
@@ -31,7 +31,7 @@ app.use((error, req, res, next) => {
       }
     )
   }else{
-    return res.status(error.statusCode).json({
+    return res.status(error.statusCode || 500).json({
         redirect: true,
         success: false,
         message: error.message

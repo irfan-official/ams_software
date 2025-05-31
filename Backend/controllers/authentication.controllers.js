@@ -1,6 +1,8 @@
 import Supervisor from "../models/supervisor.models.js"
+import { Internal } from "../utils/ErrorTypesCode.js";
+import CustomError from "../utils/ErrorHandling.js"
 
-export const RegisterController = async (req, res) => {
+export const RegisterController = async (req, res, next) => {
     try {
 
         const { name, dept, email, password } = req.user;
@@ -11,7 +13,7 @@ export const RegisterController = async (req, res) => {
         })
 
         if (!createdUser) {
-            return new Error()
+            throw new CustomError("Sorry User is not Created for Internal Server Error", 500, Internal)
         }
 
         return res.status(201).json({
@@ -19,16 +21,12 @@ export const RegisterController = async (req, res) => {
             message: ` welcome to ams`
         })
 
-    } catch (err) {
-        return res.status(500).json({
-            status: false,
-            error: err.message,
-
-        })
+    } catch (error) {
+        return next(error)
     }
 }
 
-export const LoginController = async (req, res) => {
+export const LoginController = async (req, res, next) => {
     try {
 
         const { email, password } = req.user;
@@ -37,12 +35,21 @@ export const LoginController = async (req, res) => {
             email
         })
 
+           console.log("test 1")
+
         if (!createdUser) {
-            return new Error()
+            throw new CustomError("User not found !", 404, Internal)
         }
 
-        const isMatch = await user.comparePassword(password);
-        if (!isMatch) return res.status(400).json({ error: 'Invalid credentials' });
+           console.log("test 2")
+
+        const isMatch = await createdUser.comparePassword(password);
+
+           console.log("test 3")
+
+        if (!isMatch) throw new CustomError("Invalid Password", 400, Internal)
+
+               console.log("test 4")
 
         return res.status(201).json({
             status: true,
@@ -50,10 +57,6 @@ export const LoginController = async (req, res) => {
         })
 
     } catch (err) {
-        return res.status(500).json({
-            status: false,
-            err: err.message,
-
-        })
+        return next(err)
     }
 }
