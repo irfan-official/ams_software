@@ -1,8 +1,9 @@
 import jwt from 'jsonwebtoken';
 import { Internal, External } from "../utils/ErrorTypesCode.js";
 import CustomError from "../utils/ErrorHandling.js";
+import Supervisor from '../models/supervisor.models.js';
 
-export const AuthorizationMiddleware = (req, res, next) => {
+export const AuthorizationMiddleware = async (req, res, next) => {
     try {
 
         const token = req.cookies.token;
@@ -13,7 +14,13 @@ export const AuthorizationMiddleware = (req, res, next) => {
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        req.user = decoded;
+        const checkUser = await Supervisor.findOne({_id: decoded.userID})
+
+        if(!checkUser){
+            throw new CustomError("Please Login first", 401, internal)
+        }
+
+        req.userID = decoded;
 
         next();
 

@@ -4,12 +4,13 @@ const studentScheam = new mongoose.Schema(
   {
     studentID: {
       type: String,
+      unique: true,
       required: true,
       trim: true,
     },
     signature: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "StudentSignature",
+      ref: "Signature",
     },
     associate: [{
       groupName: {

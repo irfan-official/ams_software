@@ -1,7 +1,7 @@
 import mongoose from "mongoose"
 
 const remarksSchema = mongoose.Schema({
-    groupName: {
+    group: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Group"
     },
@@ -19,4 +19,6 @@ const remarksSchema = mongoose.Schema({
     }
 }, {timestamps: true})
 
-export default Remarks = ("Remarks", remarksSchema)
+const Remarks = ("Remarks", remarksSchema)
+
+export default Remarks;

@@ -37,7 +37,7 @@ const reportModel = new mongoose.Schema(
     studentSignature: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "StudentSignature",
+        ref: "Signature",
       },
     ],
 

@@ -1,12 +1,13 @@
 import CustomError from "../utils/ErrorHandling.js"
 import { Internal, External } from "../utils/ErrorTypesCode.js";
+import Supervisor from "../models/supervisor.models.js";
 
 function isValidEmail(email) {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
 }
 
-export const RegisterMiddleware = (req, res, next) => {
+export const RegisterMiddleware = async (req, res, next) => {
 
     try {
         let { name, dept, email, password } = req.body;
@@ -30,6 +31,12 @@ export const RegisterMiddleware = (req, res, next) => {
             throw new CustomError("Only CSE, EEE, ICE, ME, BBA, LAW, ENG is allowed for dept"
                 , 400, Internal)
         }
+
+       const checkUser = await Supervisor.findOne({email: email})
+
+       if(checkUser){
+        throw new CustomError("User Already exist", 401, Internal)
+       }
 
         req.user = { name, dept, email, password }
 
