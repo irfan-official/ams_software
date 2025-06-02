@@ -10,6 +10,7 @@ import Supervisor from "../models/supervisor.models.js"
 import Comment from "../models/comment.model.js"
 import Remarks from "../models/report.models.js"
 
+
 export const allGroup = async (req, res, next) => {
 
     try {
@@ -20,7 +21,29 @@ export const allGroup = async (req, res, next) => {
             throw new CustomError("Please Login ", 401, Internal)
         }
 
-        const groups = await Group.find({ supervisor: userID }).lean();
+        const groups = await Group.find({ supervisor: userID })
+            .populate([
+                {
+                    path: "group",
+                    select: "title"
+                },
+                {
+                    path: "supervisor",
+                    select: "name"
+                },
+                {
+                    path: "title.student",
+                    select: "name studentID"
+                },
+                {
+                    path: "title.title",
+                    select: "title"
+                }
+            ])
+            .populate({
+                path: "groupMembers",
+                select: "studentID"
+            }).lean()
 
         return res.status(200).json({
             success: true,
@@ -45,6 +68,10 @@ export const createGroup = async (req, res, next) => {
         let TitleArray = [];
 
         for (let sID of groupMembers) {
+
+            if (!sID) {
+                throw new CustomError("groupMembers are required", 401, Internal)
+            }
 
             const checkPresenceStudent = await Student.findOne({ studentID: sID })
 
@@ -74,10 +101,12 @@ export const createGroup = async (req, res, next) => {
             supervisor: userID
         })
 
-        groupMembers.forEach((sID) => {
-
-            TitleArray.push(titleOfGroup._id)
-        })
+        for (let _id of IDArray) {
+            TitleArray.push({
+                student: _id,
+                title: titleOfGroup._id
+            })
+        }
 
         const createdGroup = await Group.create({
             supervisor: userID,
@@ -89,6 +118,9 @@ export const createGroup = async (req, res, next) => {
 
         })
 
+        titleOfGroup.connectedGroup = createGroup._id;
+        titleOfGroup.save();
+
         await Supervisor.findByIdAndUpdate(
             userID,
             { $push: { groups: createdGroup._id } },
@@ -97,17 +129,13 @@ export const createGroup = async (req, res, next) => {
 
         for (let sID of IDArray) {
             await Student.findByIdAndUpdate(sID,
-                { $push: { associate: {groupName: createdGroup._id, title: createdGroup._id} } },
+                { $push: { associate: { groupName: createdGroup._id, title: createdGroup._id } } },
                 { new: true }
             )
         }
 
         const populatedGroup = await Group.findById(createdGroup._id)
             .populate([
-                {
-                    path: "title",
-                    select: "title"
-                },
                 {
                     path: "group",
                     select: "title"
@@ -136,19 +164,77 @@ export const createGroup = async (req, res, next) => {
 export const updateGroup = async (req, res, next) => {
 
     try {
-        const { groupID, groupTypes, groupMembers, semister } = req.body;
+        const { groupID, groupName, groupTypes, groupMembers, semister } = req.user;
 
         const { userID } = req.userID;
+
+        const group = await Group.findOne({ _id: groupID }).populate({
+            path: "group",
+            select: "title"
+        })
+
+        if (!group) {
+            throw new CustomError("Invalid group", 401, External)
+        }
+
+        let sIDArray = []
+        let TitleArray = [];
+
+        for (let sID of groupMembers) {
+
+            let checkStudent = await Student.findOne({ studentID: sID })
+
+            if (!checkStudent) {
+                const createdStudent = await Student.create({
+                    studentID: sID,
+                })
+
+                const signature = await Signature.create({
+                    ID: createdStudent._id,
+                    signature: "",
+                })
+
+                createdStudent.signature = signature._id;
+
+                await createdStudent.save();
+
+                sIDArray.push(createdStudent._id)
+
+                TitleArray.push({
+                    student: createdStudent._id,
+                    title: group.group.title
+                })
+            } else {
+
+                let findTitle = group.title.filter((obj) => {
+                   return obj.student.toString() === checkStudent._id.toString()
+                })
+
+                sIDArray.push(checkStudent._id)
+                TitleArray.push({
+                    student: checkStudent._id,
+                    title: findTitle[0].title
+                })
+            }
+        }
+
 
         const updatedGroup = await Group.findByIdAndUpdate(
             groupID,
             {
                 groupTypes,
-                groupMembers,
+                groupMembers: sIDArray,
+                title: TitleArray,
                 semister,
             },
             { new: true } // returns the updated document
         );
+
+        const updatedTitle = await Title.findByIdAndUpdate(updatedGroup.group, {
+            title: groupName,
+            groupTypes,
+            studentID: sIDArray,
+        })
 
         return res.status(200).json({
             success: true,
@@ -159,6 +245,65 @@ export const updateGroup = async (req, res, next) => {
         next(error)
     }
 
+}
+
+export const deleteGroup = async (req, res, next) => {
+
+    try {
+        const { groupID } = req.body;
+
+        const { userID } = req.userID
+
+        const group = await Group.findOne({ _id: groupID }).populate({
+            path: "group",
+            select: "title"
+        })
+
+        await Report.deleteMany({ group: groupID });
+
+        await Title.deleteMany({ _id: group.group._id })
+
+        const updatedSupervisor = await Supervisor.findOneAndUpdate(
+            { _id: userID },
+            {
+                $pull: {
+                    groups: groupID,
+                },
+            },
+            { new: true } // return the updated document
+        );
+
+        await Group.findByIdAndDelete(groupID);
+
+        await Student.updateMany(
+            {
+                $or: [
+                    { "associate.groupName": groupID },
+                    { "associate.title": groupID }
+                ]
+            },
+            {
+                $pull: {
+                    associate: {
+                        $or: [
+                            { groupName: groupID },
+                            { title: groupID }
+                        ]
+                    }
+                }
+            }
+        );
+
+        const groups = await Group.find({ supervisor: userID })
+
+        return res.status(200).json({
+            success: true,
+            responseData: groups,
+            message: `${group.group.title || "Group"} deleted`
+        })
+    } catch (error) {
+        next(error)
+    }
 }
 
 export const groupReport = async (req, res, next) => {
@@ -212,9 +357,9 @@ export const groupReport = async (req, res, next) => {
 
         let responseData2 = [];
 
-        for (let {studentID, title, groupTypes} of report.title) {
+        for (let { studentID, title, groupTypes } of report.title) {
 
-            let student = await Student.findOne({studentID: sTD})
+            let student = await Student.findOne({ studentID: sTD })
 
             topArr.push(
                 {
@@ -355,6 +500,26 @@ export const updateReport = async (req, res, next) => {
     }
 }
 
+export const deleteReport = async (req, res, next) => {
+
+    try {
+        const { reportID } = req.body;
+
+        const { userID } = req.userID
+
+        await Report.findByIdAndDelete({ _id: reportID })
+
+        const reports = await Report.find({ supervisor: userID })
+
+        return res.status(200).json({
+            success: true,
+            responseData: reports,
+            message: "Deleted successfully"
+        })
+    } catch (error) {
+        next(error)
+    }
+}
 
 
 

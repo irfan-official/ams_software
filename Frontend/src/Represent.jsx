@@ -1,7 +1,6 @@
 import React from "react";
-
-
 import Rdata from "./seeds/sampleRepresent.json" with { type: "json" };
+
 
 function Represent() {
   return (

@@ -23,4 +23,6 @@ const commentSchema = mongoose.Schema({
     }
 }, {timestamps: true})
 
-export default Comment = ("Comment", commentSchema)
+const Comment = ("Comment", commentSchema)
+
+export default Comment

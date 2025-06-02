@@ -8,6 +8,13 @@ const studentScheam = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    
+    name: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
     signature: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Signature",

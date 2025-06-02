@@ -4,6 +4,7 @@ import { GrAdd } from "react-icons/gr";
 import showsClass from "./library/shows.js"
 import axios from "axios"
 import { NavLink } from "react-router-dom";
+import Rdata from "./seeds/sampleRepresent.json" with { type: "json" };
 
 function Overview() {
 
@@ -11,6 +12,8 @@ function Overview() {
 
   const [cpySdata, setCPYSdata] = useState(Sdata || [])
   const [createdNewData, setCreatedNewData] = useState([])
+  const [click, setClick] = useState(false)
+  const [show, setShow] = useState(false)
 
   useEffect(() => {
     if (createdNewData.length > 0) {
@@ -25,7 +28,7 @@ function Overview() {
 
 
 
-    function CSS(index = 0, Present_length = 0) {
+  function CSS(index = 0, Present_length = 0) {
     return {
       tdCSS: "h-30 align-middle p-2 border border-gray-300",
 
@@ -41,7 +44,9 @@ function Overview() {
 
       inputBox1: "border-none w-full h-full rounded-md pl-2 focus:bg-gray-500 focus:outline-0 focus:text-white",
 
-      AddCss: "w-full h-10 flex items-center justify-center mt-2 mb-7 border border-gray-300 rounded-md hover:bg-slate-200 shadow-[0_2px_6px_rgba(0,0,0,0.5)]"
+      ButtonCss: "w-full h-10 flex items-center justify-center mt-2 mb-7 border border-gray-300 rounded-md hover:bg-slate-200 shadow-[0_2px_6px_rgba(0,0,0,0.5)]",
+
+      optionalDisplay: "border border-dotted border-gray-400 p-2"
     }
   }
 
@@ -51,17 +56,78 @@ function Overview() {
 
 
   return (
-    <div className="w-full min-h-screen flex  justify-center bg-gray-50">
+    <div className="w-full min-h-screen flex  items-center bg-gray-50 flex-col">
+
+      <div
+        className={`w-[80%] h-[4vw]  ${click ? "sticky" : "relative"} top-0 z-[100] flex justify-center items-center`}>
+        <div
+          className="w-full h-full flex justify-center items-center bg-slate-950 border-2 rounded-full mt-4 mb-2 
+      border-gray-300 hover:bg-slate-900 hover:border-orange-500 shadow-[0_2px_6px_rgba(0,0,0,0.5)] text-white text-xl select-none"
+          onClick={() => {
+            setShow((prev) => !prev)
+          }}
+        >
+          <h1 className="">Details</h1>
+        </div>
+
+
+        <span className="absolute right-4 top-[1rem] justify-center items-center">
+          <label className="relative inline-block w-6 h-6 cursor-pointer ">
+            <input
+              type="checkbox"
+              className="opacity-0 w-0 h-0 peer"
+              checked={click}
+              onChange={() => setClick((prev) => !prev)}
+            />
+            <span className="absolute inset-0 rounded-full border-2 border-slate-600 peer-checked:bg-orange-500 transition">
+
+            </span>
+          </label>
+        </span>
+
+        
+        <div className={`
+    w-[90%] border-2 border-orange-500 border-t-0 bg-slate-900 absolute z-[-40] 
+    rounded-b-lg shadow-[0_2px_6px_rgba(0,0,0,0.8)] text-white p-5
+    transition-all duration-500 ease-in-out
+    ${show ? "top-[103.6%] opacity-100 pointer-events-auto z-[-40]" : "top-0 opacity-0 pointer-events-none z-[-40] "}
+  `}>
+
+            <table className="table-auto border border-dotted border-black w-full xl:text-[1vw] sm:text-[2vw]">
+              <thead>
+                <tr className="">
+                  <th className={CSS().optionalDisplay}>SL</th>
+                  <th className={CSS().optionalDisplay}>Student ID</th>
+                  <th className={CSS().optionalDisplay}>Student Name</th>
+                  <th className={CSS().optionalDisplay}> {Rdata[0].courseType} Title</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Rdata.map(({ studentID, studentName, title }, index) => <tr>
+                  <td className={` ${CSS().optionalDisplay} h-10`}>{index + 1}.</td>
+                  <td className={` ${CSS().optionalDisplay} h-10`}>{studentID}</td>
+                  <td className={` ${CSS().optionalDisplay} h-10`}>{studentName}</td>
+                  <td className={` ${CSS().optionalDisplay} h-10`}>{title}</td>
+                </tr>)
+                }
+              </tbody>
+            </table>
+          </div>
+        
+
+
+      </div>
+
       <form className="w-[90%]" >
         <div className="overflow-x-auto p-4 w-full ">
           <table className="table-auto border border-black w-full xl:text-[1vw] sm:text-[2vw]">
-            <caption className="sm:text-[3vw] xl:text-[1.5vw] sm:mb-4 xl:mb-8 mt-[3.5rem] relative ">
+            <caption className="sm:text-[3vw] xl:text-[1.5vw] sm:mb-4 xl:mb-8 mt-2 relative ">
               <strong>
                 <u className="text-3xl">
                   {"Thesis Title"} (8th semister)
                 </u>
               </strong>
-               <NavLink  to="/report" className="px-7 py-3 bg-slate-600 text-white text-[1rem] rounded-md absolute bottom-0 right-5 shadow-[0_2px_6px_rgba(0,0,0,0.4)] border border-gray-300">
+              <NavLink to="/report" className="px-7 py-3 bg-slate-600 text-white text-[1rem] rounded-md absolute bottom-0 right-5 shadow-[0_2px_6px_rgba(0,0,0,0.4)] border border-gray-300">
                 Report
               </NavLink>
             </caption>
@@ -240,7 +306,7 @@ function Overview() {
               setCreatedNewData((prev) => [...prev, newData].sort((a, b) => a.week - b.week))
               setCPYSdata((prev) => [...prev, newData])
             }}
-            className={CSS().AddCss}><GrAdd /></div>
+            className={CSS().ButtonCss}><GrAdd /></div>
         </div>
       </form>
     </div>

@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const groupSchema = mongoose.Schema(
   {
@@ -19,12 +19,16 @@ const groupSchema = mongoose.Schema(
         required: true,
       },
     ],
-    title: [
-      {
+    title: [{
+      student: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Title",
+        ref: "Student"
       },
-    ],
+      title: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Title"
+      }
+    }],
     groupTypes: {     
       type: String,
       enum: ["Thesis", "IDP"],

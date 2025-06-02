@@ -1,6 +1,6 @@
 import { Internal } from "../utils/ErrorTypesCode.js";
 import CustomError from "../utils/ErrorHandling.js"
-import Report from "../models/report.models";
+import Report from "../models/report.models.js";
 import Student from "../models/student.models.js";
 import Group from "../models/group.models.js";
 import Title from "../models/title.model.js";
@@ -38,7 +38,6 @@ export const createGroupMiddleware = (req, res, next) => {
     }
 }
 
-
 function weekFinder(report) {
     let week = report.length
 
@@ -48,7 +47,7 @@ function weekFinder(report) {
     return week
 }
 
-const createReportMiddleware = async (req, res, next) => {
+export const createReportMiddleware = async (req, res, next) => {
 
     try {
         let { groupID = "", studentID = [], titleID = [] } = req.body;
@@ -96,7 +95,8 @@ const createReportMiddleware = async (req, res, next) => {
 
 }
 
-const updateGroupMiddleware = (req, res, next) => {
+export const updateGroupMiddleware = (req, res, next) => {
+
     let {groupID="", groupName = "", groupTypes = "", groupMembers = [], semister = ""} = req.body;
 
         groupID = groupID.trim();
@@ -107,6 +107,7 @@ const updateGroupMiddleware = (req, res, next) => {
         if (!groupID || !groupName || !groupTypes || !semister || groupMembers.length < 1) {
             throw new CustomError("All fields are required", 400, Internal)
         }
+
 
         const validGroupTypes = ["Thesis", "IDP"]
 
@@ -121,5 +122,7 @@ const updateGroupMiddleware = (req, res, next) => {
         }
 
         req.user = {groupID, groupName, groupTypes, groupMembers, semister}
+
+        next()
 
 }

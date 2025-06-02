@@ -1,11 +1,14 @@
-import mongoose from "mongoose";
-import Group from "./group.models";
+import mongoose, { connect } from "mongoose";
 
 const titleSchema = mongoose.Schema({
     title: {
         type: "String",
         required: true,
         trim: true,
+    },
+    connectedGroup:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Group"
     },
     groupTypes: {
         type: "String",

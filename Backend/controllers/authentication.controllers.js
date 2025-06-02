@@ -20,7 +20,7 @@ export const RegisterController = async (req, res, next) => {
         AssignCookies(res, {userID: createdUser._id}, CookieOptions(24 * 60 * 60 * 1000))
 
         return res.status(201).json({
-            status: true,
+            success: true,
             message: ` welcome to ams`
         })
 
@@ -49,7 +49,7 @@ export const LoginController = async (req, res, next) => {
         AssignCookies(res, {userID: checkedUser._id},  CookieOptions(24 * 60 * 60 * 1000)) 
 
         return res.status(201).json({
-            status: true,
+            success: true,
             message: ` welcome to ams`
         })
 
