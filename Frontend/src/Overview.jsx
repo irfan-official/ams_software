@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext, use } from "react";
 import Sdata from "./seeds/sampleAttandence.json" with { type: "json" };
 import { GrAdd } from "react-icons/gr";
 import showsClass from "./library/shows.js"
@@ -8,15 +8,16 @@ import Rdata from "./seeds/sampleRepresent.json" with { type: "json" };
 import { IoIosCreate } from "react-icons/io";
 import { FaRegCheckCircle } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
+import { UserContext } from "./context/Context.jsx";
 
 function Overview() {
 
+  let {reportData, setReportData} = useContext(UserContext)
+  let {details, setDetails} = useContext(UserContext)
   const timeoutRef = useRef(null);
 
   const [cpySdata, setCPYSdata] = useState(Sdata || [])
-  const [reportData, setReportData] = useState(Sdata || [])
   const [createdNewData, setCreatedNewData] = useState([])
-  const [details, setDetails] = useState(Rdata || [])
   const [click, setClick] = useState(false)
   const [show, setShow] = useState(false)
   const [bin, setBin] = useState(false)

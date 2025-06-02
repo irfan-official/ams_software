@@ -4,10 +4,11 @@ import data from "./seeds/allGroup.json"
 import { FaRegEdit } from "react-icons/fa";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { GrAdd } from "react-icons/gr";
+import Sdata from "./seeds/sampleAttandence.json"
 
 function App() {
   const [allGroup, setAllGroup] = useState(data || []);
-
+  const [reportData, setReportData] = useState(Sdata || [])
   const [del, setDelete] = useState({
     groupName: "",
     groupTypes: "",

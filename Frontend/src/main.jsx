@@ -11,11 +11,12 @@ import Overview from "./Overview.jsx";
 import CreateGroup from "./createGroup.jsx";
 import UpdateGroup from "./UpdateGroup.jsx";
 import ExtendGroup from "./ExtendGroup.jsx";
-
+import Context from "./context/Context.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <BrowserRouter>
+    <Context>
+      <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/overview" element={<Overview/>} />
@@ -32,5 +33,6 @@ createRoot(document.getElementById("root")).render(
         <Route path="/register/student" element={<App />} />
       </Routes>
     </BrowserRouter>
+    </Context>
   </StrictMode>
 );
