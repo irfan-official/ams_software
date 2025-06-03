@@ -7,12 +7,22 @@ export const UserContext = createContext();
 
 function Context(props) {
 
- const [reportData, setReportData] = useState(ReportData)
-  const [details, setDetails] = useState(DetailsData)
+ const [reportData, setReportData] = useState([])
+  const [details, setDetails] = useState([])
+  const [allGroup, setAllGroup] = useState([])
+  const [userID, setUserID] = useState("")
+  const [updateGroup, setUpdateGroup] = useState({
+    groupID: "",
+    groupName: "",
+    groupMembers: [],
+    groupTypes: [],
+    semister: ""
+  })
+  const [errorMessage, setErrorMessage] = useState("")
 
 
   return <UserContext.Provider 
-  value={{reportData, setReportData, details, setDetails}}>
+  value={{reportData, setReportData, details, setDetails, allGroup, setAllGroup, updateGroup, setUpdateGroup, errorMessage, setErrorMessage, userID, setUserID}}>
     {props.children}
     </UserContext.Provider>
 }

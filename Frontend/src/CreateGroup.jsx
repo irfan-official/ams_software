@@ -1,10 +1,24 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { GrAdd } from "react-icons/gr";
 import { FiMinusCircle } from "react-icons/fi";
 import { useRef } from 'react';
+import axios from "./library/axiosInstance.js"
+import { UserContext } from "./context/Context.jsx";
+import { useNavigate } from 'react-router-dom';
 
 
 function CreateGroup() {
+
+  let {userID, } = useContext(UserContext)
+
+  const navigate = useNavigate();
+
+useEffect(() => {
+  if (!userID) {
+    navigate("/login/teacher");
+  }
+}, [userID]); 
+
   const submitHandlerRef = useRef(null);
   const [groupName, setGroupName] = useState("");
   const [groupTypes, setGroupTypes] = useState("");
@@ -28,11 +42,26 @@ async function handleSubmit(e) {
   const obj = { groupName, groupTypes, ids, semister };
 
   // Set debounce timer
-  submitHandlerRef.current = setTimeout(() => {
+  submitHandlerRef.current = setTimeout(async () => {
     console.log("obj =>", obj);
 
     // Optionally send the data
     // axios.post('/api/group', obj);
+
+    alert("create group req send")
+
+    let response = await axios.post("/group/api/v1/create-group", {
+      groupName, groupTypes, groupMembers, semister
+    }, 
+      { withCredentials: true }
+    )
+
+   if(response.data.success){
+     navigate("/");
+     return;
+   }
+   alert("something is not good")
+
   }, 3000);
 }
 

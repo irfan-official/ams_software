@@ -1,25 +1,38 @@
-import React, { useState } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { GrAdd } from "react-icons/gr";
 import { FiMinusCircle } from "react-icons/fi";
 import { useRef } from 'react';
-import data from "./seeds/sampleGroup.js"
+// import data from "./seeds/sampleGroup.js"
+import { UserContext } from "./context/Context.jsx";
+import { useNavigate } from 'react-router-dom';
+import axios from "./library/axiosInstance.js"
 
 function UpdateGroup() {
 
+  let {updateGroup} = useContext(UserContext)
+
+    const navigate = useNavigate();
+
+  useEffect(() => {
+    if(!updateGroup.groupID){
+      navigate("/login/teacher")
+    }
+  },[updateGroup.groupID])
+
   function setupGroupMembers(){
     let arr = []
-    data.groupMembers.forEach((elem, index) => {
+    updateGroup.groupMembers.forEach((elem, index) => {
 
-      arr.push([elem])
+      arr.push([elem.studentID])
     })
     return arr;
   }
 
   const submitHandlerRef = useRef(null);
-  const [groupName, setGroupName] = useState(data.groupName);
-  const [groupTypes, setGroupTypes] = useState(data.groupTypes);
+  const [groupName, setGroupName] = useState(updateGroup.groupName);
+  const [groupTypes, setGroupTypes] = useState(updateGroup.groupTypes);
   const [groupMembers, setGroupMembers] = useState(setupGroupMembers());
-  const [semister, setSemister] = useState(data.semister);
+  const [semister, setSemister] = useState(updateGroup.semister);
 
  
 async function handleSubmit(e) {
@@ -36,7 +49,7 @@ async function handleSubmit(e) {
   }
 
   const ids = groupMembers.map((elem) => elem[0]);
-  const obj = { groupName, groupTypes, ids, semister };
+  const obj = { groupID: updateGroup.groupID, groupName, groupTypes, groupMembers: ids, semister };
 
   // Set debounce timer
   submitHandlerRef.current = setTimeout(() => {
@@ -44,6 +57,8 @@ async function handleSubmit(e) {
 
     // Optionally send the data
     // axios.post('/api/group', obj);
+    // groupID="", groupName = "", groupTypes = "", groupMembers = [], semister = ""
+    
   }, 3000);
 }
 

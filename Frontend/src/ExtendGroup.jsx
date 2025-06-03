@@ -3,6 +3,7 @@ import { GrAdd } from "react-icons/gr";
 import { FiMinusCircle } from "react-icons/fi";
 import { useRef } from 'react';
 import data from "./seeds/sampleGroup.js"
+import axios from "./library/axiosInstance.js"
 
 function ExtendGroup() {
 

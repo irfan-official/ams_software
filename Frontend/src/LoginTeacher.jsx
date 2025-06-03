@@ -1,15 +1,21 @@
-import React,{useState, useEffect} from 'react'
-import { NavLink } from 'react-router-dom'
-import axios from "axios"
+import React,{useState, useEffect, useContext} from 'react'
+import { NavLink, useNavigate } from 'react-router-dom'
 import isValidEmail from "./library/validEmailChecker.js"
+import axios from "./library/axiosInstance.js"
+import { UserContext } from "./context/Context.jsx";
 
 function LoginTeacher() {
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 
+  const {setErrorMessage} = useContext(UserContext);
+
+  const navigate = useNavigate()
+
   async function handleSubmit(e){
-    e.preventDefault();
+   try{
+     e.preventDefault();
 
     let obj = {
       email: email.trim(),
@@ -27,7 +33,21 @@ function LoginTeacher() {
 
     console.log(obj)
 
-    let response = await axios.post('')
+    let response = await axios.post("/auth/api/v1/supervisor/login", {
+      email, password
+    })
+
+    alert(response.data.message)
+
+    if(response.data.redirect){
+      navigate("/login/teacher") // if login fails
+    }
+    navigate("/") // if login pass
+   }catch(error){
+
+    setErrorMessage(error.message)
+    navigate("/error")
+   }
   }
 
   return (

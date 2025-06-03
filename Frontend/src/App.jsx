@@ -1,14 +1,29 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { NavLink } from 'react-router-dom'
 import data from "./seeds/allGroup.json"
 import { FaRegEdit } from "react-icons/fa";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { GrAdd } from "react-icons/gr";
 import Sdata from "./seeds/sampleAttandence.json"
+import axios from "./library/axiosInstance.js"
+import { UserContext } from "./context/Context.jsx";
+import { useNavigate } from 'react-router-dom';
+import DeleteGroupButton from './DeleteGroupButton.jsx';
+import InitialGroupShow from './InitialGroupShow.jsx';
 
 function App() {
-  const [allGroup, setAllGroup] = useState(data || []);
-  const [reportData, setReportData] = useState(Sdata || [])
+
+  let { allGroup = [], setAllGroup, groupID, userID, setGroupID, setReportData, setDetails, setUpdateGroup, setUserID } = useContext(UserContext)
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!userID) {
+      navigate("/login/teacher");
+    }
+  }, [userID]);
+
+
   const [del, setDelete] = useState({
     groupName: "",
     groupTypes: "",
@@ -16,49 +31,120 @@ function App() {
     index: null
   })
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        let response = await axios.get("/group/api/v1/allgroup", { withCredentials: true });
+        if (!response.data.success) {
+          navigate("/login/teacher")
+        }
+
+        setUserID(response.data.userID)
+        setAllGroup(response.data.responseData);
+
+      } catch (error) {
+        alert(error.message);
+        navigate("/login/teacher")
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, [allGroup]);
+
+
+  async function getReport(groupID) {
+    try {
+
+      let response = await axios.post("/url",
+        { groupID },
+        { withCredentials: true }
+      );
+
+      if (response.data.success) {
+        setReportData(response.data.responseData1)
+        setDetails(response.data.responseData2)
+        navigate("/overview")
+      }
+
+    } catch (error) {
+      alert(error.message)
+      console.log(error)
+    }
+  }
+
   function clearDel() {
     setDelete((prev) => ({ ...prev, groupName: "", groupTypes: "", clickStatus: false, index: null }))
-    return;
   }
+
+  async function deleteGroup(groupID) {
+    try {
+      console.log("del => ", groupID)
+
+      let response = await axios.delete("/group/api/v1/delete-group", {
+        data: {
+          groupID: groupID
+        },
+        withCredentials: true,
+      })
+
+      if (!response.data.status) {
+
+        console.log(error)
+        alert(response.data.message)
+
+      } else {
+        setAllGroup(response.data.responseData)
+
+      }
+      setDelete((prev) => ({ ...prev, groupName: "", groupTypes: "", clickStatus: false, index: null }))
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+
 
   return (
     <div className='w-full min-h-screen mx-auto bg-gray-300  pt-1 overflow-x-hidden absolute z-20'>
 
       {
-        del.clickStatus ? <div className='w-full h-screen bg-[rgba(192,192,192,0.734)] flex items-center justify-center fixed  z-50 bottom-0'>
-          <div className="rounded-md bg-slate-600 flex flex-col items-center justify-between py-5 px-5 shadow-[0_2px_6px_rgba(0,0,0,0.5)]">
-            <h3 className='text-white font-semibold text-xl text-start'>Delete this {del.groupTypes} group</h3>
-            <h4 className='py-5 text-white'><strong className='text-yellow-500'>Title:</strong> {del.groupName}</h4>
-            <div className='flex w-full justify-center gap-10 px-2'>
-              <button onClick={clearDel} className='px-5 py-3 w-28 rounded-md text-center bg-gray-500 text-white [0_2px_6px_rgba(0,0,0,0.9)]'>Back</button>
-              <button
-                onClick={() => {
-                  console.log("del => ", del)
-                  setAllGroup((prev) => prev.filter((item, index) => index != del.index));
-                  clearDel()
-                }}
-                className='px-5 py-3 w-28 rounded-md text-center bg-red-500 text-white [0_2px_6px_rgba(0,0,0,0.9)]'>Delete</button>
-            </div>
-          </div>
-        </div> : <></>
+        del.clickStatus ? <DeleteGroupButton del={del} deleteGroup={deleteGroup} clearDel={clearDel} /> : <></>
       }
       {
-        allGroup.length < 1 ? <div className='w-full min-h-[98vh] bg-gray-200 flex items-center justify-center flex-col  gap-6 '>
-          <h1 className='text-3xl'>You dont have any group now</h1>
-          <h2 className='text-xl'>Create group to see group</h2>
-          <NavLink to="/create/group" className='px-4 py-3 bg-gray-600 cursor-pointer text-white rounded-md shadow-[0_2px_6px_rgba(0,0,0,0.4)]'>Create Group</NavLink>
-        </div> :
+        allGroup.length < 1 ? <InitialGroupShow /> :
           <>
             <h1 className='text-center mt-24 text-6xl font-semibold select-none'>ALL Groups</h1>
             <div className=" w-full my-10 mt-20 flex items-center justify-center flex-col gap-4 ">
               {
                 allGroup.map((elem, index) => {
                   return <div className={`w-[60%] px-4 py-3 ${del.index === index ? "bg-red-800 text-white" : ""} bg-gray-400 hover:bg-gray-500 hover:text-white flex gap-2 items-center rounded-md border border-gray-200 shadow-[0_2px_6px_rgba(0,0,0,0.6)] `}>
-                    <NavLink to={`/overview`} className='w-[90%] '>{elem.groupName}</NavLink>
+
+                    <button onClick={() => { getReport(elem._id) }} className='w-[90%] text-start'>{elem.group.title}</button>
+
                     <div className="w-[10%] h-full flex items-center justify-between px-2 ">
-                      <NavLink to="/update/group" className="scale-150 hover:text-lime-400 "><FaRegEdit /></NavLink>
+                      <NavLink
+                        onClick={() => {
+
+                          /*
+                            groupName: "This is my Group",
+                            groupMembers: ["0812110205101017", "0812110205101027", "0812110205101020"],
+                            groupTypes: "Thesis",
+                            semister: "7"
+                           */
+
+                          setUpdateGroup({
+                            groupID: elem._id,
+                            groupName: elem.group.title,
+                            groupMembers: elem.groupMembers,
+                            groupTypes: elem.groupTypes,
+                            semister: elem.semister
+                          })
+
+                        }}
+                        to="/update/group" className="scale-150 hover:text-lime-400 ">
+                        <FaRegEdit />
+                      </NavLink>
                       <button onClick={() => {
-                        setDelete((prev) => ({ ...prev, groupName: elem.groupName, groupTypes: elem.groupTypes, clickStatus: !prev.clickStatus, index: index }))
+                        setDelete((prev) => ({ ...prev, groupID: elem._id, groupName: elem.group.title, groupTypes: elem.groupTypes, clickStatus: !prev.clickStatus, index: index }))
                       }} className="scale-[155%] hover:text-red-600  relative z-40 cursor-pointer">
                         <RiDeleteBinLine />
                       </button>
@@ -68,7 +154,7 @@ function App() {
                 })
               }
               <NavLink
-              to="/create/group"
+                to="/create/group"
                 className='w-[60%] mb-16 h-10 flex items-center justify-center border border-gray-100 rounded-md hover:bg-slate-300 shadow-[0_2px_6px_rgba(0,0,0,0.6)] bg-slate-200'>
                 <span className='scale-110'>
                   <GrAdd />

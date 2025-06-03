@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 import isValidEmail from "./library/validEmailChecker.js"
+import axios from "./library/axiosInstance.js"
 
 function RegisterTeacher() {
 

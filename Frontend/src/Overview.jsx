@@ -9,18 +9,30 @@ import { IoIosCreate } from "react-icons/io";
 import { FaRegCheckCircle } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
 import { UserContext } from "./context/Context.jsx";
+import { useNavigate } from "react-router-dom";
+
 
 function Overview() {
 
   let {reportData, setReportData} = useContext(UserContext)
   let {details, setDetails} = useContext(UserContext)
+
+  const navigate = useNavigate();
+
+useEffect(() => {
+  if (!reportData || !details) {
+    navigate(-1);
+  }
+}, [reportData, details]);
+
+
   const timeoutRef = useRef(null);
 
   const [cpySdata, setCPYSdata] = useState(Sdata || [])
   const [createdNewData, setCreatedNewData] = useState([])
+  
   const [click, setClick] = useState(false)
   const [show, setShow] = useState(false)
-  const [bin, setBin] = useState(false)
 
   useEffect(() => {
     if (createdNewData.length > 0) {
@@ -318,7 +330,7 @@ function Overview() {
               </thead>
 
               <tbody className="border-none outline-0">
-                {cpySdata.map(
+                {reportData.map(
                   (
                     {
                       _id = "",
