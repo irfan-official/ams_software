@@ -38,10 +38,10 @@ export const createGroupMiddleware = (req, res, next) => {
     }
 }
 
-function weekFinder(report) {
-    let week = report.length
+function weekFinder(length) {
+    let week = length
 
-    if (report.length === 0) {
+    if (length === 0) {
         week += 1;
     }
     return week
@@ -49,43 +49,48 @@ function weekFinder(report) {
 
 export const createReportMiddleware = async (req, res, next) => {
 
+     console.log(req.body)
+
     try {
-        let { groupID = "", studentID = [], titleID = [] } = req.body;
+        let { groupID = "", studentID = []} = req.body;
+
+        if( studentID.length < 1){
+             throw new CustomError("All fields are required", 401, Internal)
+        }
+        
+        if (!groupID )  {
+            throw new CustomError("All fields are required", 401, Internal)
+        }
         
         let report = await Report.find({ group: groupID }).lean();
 
-        const {preevWeek = weekFinder(report) } = req.body;
+        const preevWeek = weekFinder(report.length) 
 
         let group = await Group.findOne({ _id: groupID }).lean();
-        let title = await Title.findOne({ _id: titleID }).lean();
 
-        if (!groupID || !preevWeek || !studentID || !title) {
-            throw new CustomError("All fields are required", 401, Internal)
-        }
 
-        if (!group) {
-            throw new CustomError("Invalid group", 401, Internal)
-        }
+        let studentIdArray = [];
 
-        if (!title) {
-            throw new CustomError("Invalid group title", 401, Internal)
-        }
-
-        for (sID of studentID) {
-
+        for (let sID of studentID) {
             try {
-                let student = Student.findOne({ _id: sID })
+                let student = await Student.findOne({ studentID: sID })
+
+                studentIdArray.push(student._id)
 
                 if (!student) {
                     throw new CustomError("Invalid Student, please insert the correct student ID", 401, Internal)
                 }
+
+
             } catch (error) {
                 next(error)
             }
 
         }
 
-        req.user = { groupID, preevWeek, studentID, title };
+        req.user = { groupID, preevWeek, studentID: studentIdArray, title: group.group };
+
+        console.log("Test 1 passed")
 
         next();
 

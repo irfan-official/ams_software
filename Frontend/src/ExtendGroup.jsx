@@ -1,11 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { GrAdd } from "react-icons/gr";
 import { FiMinusCircle } from "react-icons/fi";
-import { useRef } from 'react';
 import data from "./seeds/sampleGroup.js"
 import axios from "./library/axiosInstance.js"
 
 function ExtendGroup() {
+
+    const groupID = useRef(localStorage.getItem("groupID") || "");
+
+    useEffect(() => {
+      if(!groupID){
+        navigate("/");
+      }
+    }, []);
 
   function setupGroupMembers(){
     let arr = []

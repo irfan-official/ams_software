@@ -12,27 +12,32 @@ import CreateGroup from "./createGroup.jsx";
 import UpdateGroup from "./UpdateGroup.jsx";
 import ExtendGroup from "./ExtendGroup.jsx";
 import Context from "./context/Context.jsx";
+import Protected from "./Protected.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Context>
       <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/overview" element={<Overview/>} />
-        <Route path="/report" element={<Report />} />
+        <Routes>
 
-        <Route path="/create/group" element={<CreateGroup />} />
-        <Route path="/update/group" element={<UpdateGroup />} />
-        <Route path="/extend/group" element={<ExtendGroup />} />
+          <Route element={<Protected />}>
+            <Route path="/overview" element={<Overview />} />
+            <Route path="/report" element={<Report />} />
+            <Route path="/update/group" element={<UpdateGroup />} />
+            <Route path="/extend/group" element={<ExtendGroup />} />
+          </Route>
 
-        <Route path="/login/teacher" element={< LoginTeacher/>} />
-        <Route path="/register/teacher" element={<RegisterTeacher />} />
+          <Route path="/" element={<App />} />
+          <Route path="/create/group" element={<CreateGroup />} />
 
-        <Route path="/login/student" element={<App />} />
-        <Route path="/register/student" element={<App />} />
-      </Routes>
-    </BrowserRouter>
+          <Route path="/login/teacher" element={< LoginTeacher />} />
+          <Route path="/register/teacher" element={<RegisterTeacher />} />
+
+          <Route path="/login/student" element={<App />} />
+          <Route path="/register/student" element={<App />} />
+        </Routes>
+
+      </BrowserRouter>
     </Context>
   </StrictMode>
 );

@@ -1,6 +1,6 @@
 import React from 'react'
 
-function DeleteGroupButton({del, deleteGroup, clearDel}) {
+function DeleteGroupButton({del, deleteGroup, clearDel, setDelete}) {
     return (
         <div className='w-full h-screen bg-[rgba(192,192,192,0.734)] flex items-center justify-center fixed  z-50 bottom-0'>
             <div className="rounded-md bg-slate-600 flex flex-col items-center justify-between py-5 px-5 shadow-[0_2px_6px_rgba(0,0,0,0.5)]">
@@ -9,7 +9,9 @@ function DeleteGroupButton({del, deleteGroup, clearDel}) {
                 <div className='flex w-full justify-center gap-10 px-2'>
                     <button onClick={clearDel} className='px-5 py-3 w-28 rounded-md text-center bg-gray-500 text-white [0_2px_6px_rgba(0,0,0,0.9)]'>Back</button>
                     <button
-                        onClick={() => { deleteGroup(del.groupID) }}
+                        onClick={() => { 
+                            setDelete((prev) => ({...prev, clickStatus: false,}))
+                            deleteGroup(del.groupID) }}
 
                         className='px-5 py-3 w-28 rounded-md text-center bg-red-500 text-white [0_2px_6px_rgba(0,0,0,0.9)]'>Delete</button>
                 </div>

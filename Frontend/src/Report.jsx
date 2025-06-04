@@ -1,8 +1,16 @@
-import React from "react";
+import React, {useRef} from "react";
 import Attendance from "./Attendance.jsx";
 import Represent from "./Represent.jsx";
 
 function Report() {
+    const groupID = useRef(localStorage.getItem("groupID") || "");
+
+    useEffect(() => {
+      if(!groupID){
+        navigate("/");
+      }
+    }, []);
+
   return (
     <div className="w-full min-h-full flex flex-col justify-center, items-center relative ">
 

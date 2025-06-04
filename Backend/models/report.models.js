@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { startSession } from "mongoose";
 
 const reportModel = new mongoose.Schema(
   {
@@ -36,31 +36,75 @@ const reportModel = new mongoose.Schema(
 
     studentSignature: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Signature",
+        studentID: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Student",
+        },
+
+        signature: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Signature",
+        }
       },
     ],
 
     title: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Title",
-        required: true,
+        studentID: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Student",
+          required: true,
+        },
+
+        title: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Title",
+          required: true,
+        }
+      }
+    ],
+
+    present: [
+      {
+        studentID: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Student",
+          required: true,
+        },       
+       presentStatus: {
+          type: Boolean,
+          default: false,
+        },
       }
     ],
 
     supervisorComments: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Comment",
-        required: true,
+        studentID: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Student",
+          required: true,
+        },
+        comment: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Comment",
+          required: true,
+        },
       },
     ],
     remarks: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Remarks",
-        required: true,
+        studentID: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Student",
+          required: true,
+        },
+
+        remarks: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Remarks",
+          required: true,
+        }
       },
     ],
   },

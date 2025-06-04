@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext, useRef } from 'react'
 import { GrAdd } from "react-icons/gr";
 import { FiMinusCircle } from "react-icons/fi";
-import { useRef } from 'react';
 import axios from "./library/axiosInstance.js"
 import { UserContext } from "./context/Context.jsx";
 import { useNavigate } from 'react-router-dom';
@@ -9,15 +8,11 @@ import { useNavigate } from 'react-router-dom';
 
 function CreateGroup() {
 
+
   let {userID, } = useContext(UserContext)
 
   const navigate = useNavigate();
 
-useEffect(() => {
-  if (!userID) {
-    navigate("/login/teacher");
-  }
-}, [userID]); 
 
   const submitHandlerRef = useRef(null);
   const [groupName, setGroupName] = useState("");

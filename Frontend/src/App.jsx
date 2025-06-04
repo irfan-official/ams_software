@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext, useRef } from 'react'
 import { NavLink } from 'react-router-dom'
 import data from "./seeds/allGroup.json"
 import { FaRegEdit } from "react-icons/fa";
@@ -13,16 +13,9 @@ import InitialGroupShow from './InitialGroupShow.jsx';
 
 function App() {
 
-  let { allGroup = [], setAllGroup, groupID, userID, setGroupID, setReportData, setDetails, setUpdateGroup, setUserID } = useContext(UserContext)
+  let { allGroup, setAllGroup, groupID, userID, setGroupID, setReportData, setDetails, setUpdateGroup, setUserID, setCrrentGroupTypes, setCurrentGroupID } = useContext(UserContext)
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!userID) {
-      navigate("/login/teacher");
-    }
-  }, [userID]);
-
 
   const [del, setDelete] = useState({
     groupName: "",
@@ -50,27 +43,7 @@ function App() {
     };
     fetchData();
   }, [allGroup]);
-
-
-  async function getReport(groupID) {
-    try {
-
-      let response = await axios.post("/url",
-        { groupID },
-        { withCredentials: true }
-      );
-
-      if (response.data.success) {
-        setReportData(response.data.responseData1)
-        setDetails(response.data.responseData2)
-        navigate("/overview")
-      }
-
-    } catch (error) {
-      alert(error.message)
-      console.log(error)
-    }
-  }
+ 
 
   function clearDel() {
     setDelete((prev) => ({ ...prev, groupName: "", groupTypes: "", clickStatus: false, index: null }))
@@ -79,7 +52,7 @@ function App() {
   async function deleteGroup(groupID) {
     try {
       console.log("del => ", groupID)
-
+      clearDel();
       let response = await axios.delete("/group/api/v1/delete-group", {
         data: {
           groupID: groupID
@@ -89,12 +62,10 @@ function App() {
 
       if (!response.data.status) {
 
-        console.log(error)
         alert(response.data.message)
 
       } else {
-        setAllGroup(response.data.responseData)
-
+        navigate("/")
       }
       setDelete((prev) => ({ ...prev, groupName: "", groupTypes: "", clickStatus: false, index: null }))
     } catch (error) {
@@ -107,7 +78,7 @@ function App() {
     <div className='w-full min-h-screen mx-auto bg-gray-300  pt-1 overflow-x-hidden absolute z-20'>
 
       {
-        del.clickStatus ? <DeleteGroupButton del={del} deleteGroup={deleteGroup} clearDel={clearDel} /> : <></>
+        del.clickStatus ? <DeleteGroupButton del={del} deleteGroup={deleteGroup} clearDel={clearDel} setDelete={setDelete} /> : <></>
       }
       {
         allGroup.length < 1 ? <InitialGroupShow /> :
@@ -118,7 +89,13 @@ function App() {
                 allGroup.map((elem, index) => {
                   return <div className={`w-[60%] px-4 py-3 ${del.index === index ? "bg-red-800 text-white" : ""} bg-gray-400 hover:bg-gray-500 hover:text-white flex gap-2 items-center rounded-md border border-gray-200 shadow-[0_2px_6px_rgba(0,0,0,0.6)] `}>
 
-                    <button onClick={() => { getReport(elem._id) }} className='w-[90%] text-start'>{elem.group.title}</button>
+                    <NavLink
+                      to="/overview"
+                     onClick={() => {
+                       localStorage.setItem("groupID", elem._id)
+                       setCrrentGroupTypes(elem.groupTypes);  }} 
+                       
+                       className='w-[90%] text-start'>{elem?.group?.title || "Deleted"}</NavLink>
 
                     <div className="w-[10%] h-full flex items-center justify-between px-2 ">
                       <NavLink
@@ -130,13 +107,13 @@ function App() {
                             groupTypes: "Thesis",
                             semister: "7"
                            */
-
+                          localStorage.setItem("groupID", elem?._id)
                           setUpdateGroup({
-                            groupID: elem._id,
-                            groupName: elem.group.title,
-                            groupMembers: elem.groupMembers,
-                            groupTypes: elem.groupTypes,
-                            semister: elem.semister
+                            groupID: elem?._id,
+                            groupName: elem?.group.title,
+                            groupMembers: elem?.groupMembers,
+                            groupTypes: elem?.groupTypes,
+                            semister: elem?.semister
                           })
 
                         }}
@@ -144,6 +121,7 @@ function App() {
                         <FaRegEdit />
                       </NavLink>
                       <button onClick={() => {
+                         localStorage.setItem("groupID", elem?._id)
                         setDelete((prev) => ({ ...prev, groupID: elem._id, groupName: elem.group.title, groupTypes: elem.groupTypes, clickStatus: !prev.clickStatus, index: index }))
                       }} className="scale-[155%] hover:text-red-600  relative z-40 cursor-pointer">
                         <RiDeleteBinLine />

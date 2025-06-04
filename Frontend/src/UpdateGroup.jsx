@@ -1,7 +1,6 @@
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useContext, useEffect, useRef } from 'react'
 import { GrAdd } from "react-icons/gr";
 import { FiMinusCircle } from "react-icons/fi";
-import { useRef } from 'react';
 // import data from "./seeds/sampleGroup.js"
 import { UserContext } from "./context/Context.jsx";
 import { useNavigate } from 'react-router-dom';
@@ -9,17 +8,25 @@ import axios from "./library/axiosInstance.js"
 
 function UpdateGroup() {
 
-  let {updateGroup} = useContext(UserContext)
+    const groupID = useRef(localStorage.getItem("groupID") || "");
 
-    const navigate = useNavigate();
+    useEffect(() => {
+      if(!groupID){
+        navigate("/");
+      }
+    }, []);
+
+  let { updateGroup } = useContext(UserContext)
+
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if(!updateGroup.groupID){
+    if (!updateGroup.groupID) {
       navigate("/login/teacher")
     }
-  },[updateGroup.groupID])
+  }, [updateGroup.groupID])
 
-  function setupGroupMembers(){
+  function setupGroupMembers() {
     let arr = []
     updateGroup.groupMembers.forEach((elem, index) => {
 
@@ -34,33 +41,41 @@ function UpdateGroup() {
   const [groupMembers, setGroupMembers] = useState(setupGroupMembers());
   const [semister, setSemister] = useState(updateGroup.semister);
 
- 
-async function handleSubmit(e) {
-  e.preventDefault();
+  async function handleSubmit(e) {
+    e.preventDefault();
 
-  if (!groupName || !groupTypes || !semister) {
-    alert("All fields are required");
-    return;
+    if (!groupName || !groupTypes || !semister) {
+      alert("All fields are required");
+      return;
+    }
+
+    const obj = {
+      groupID: updateGroup.groupID,
+      groupName,
+      groupTypes,
+      groupMembers,
+      semister
+    };
+
+    alert("Req is sending...")
+
+    try {
+      const response = await axios.patch("/group/api/v1/update-group", obj, {
+        withCredentials: true
+      });
+
+      alert(response.data.message);
+
+      if (response.data.success) {
+        navigate("/");
+      }
+
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    }
   }
 
-  // Always clear previous timeout
-  if (submitHandlerRef.current) {
-    clearTimeout(submitHandlerRef.current);
-  }
-
-  const ids = groupMembers.map((elem) => elem[0]);
-  const obj = { groupID: updateGroup.groupID, groupName, groupTypes, groupMembers: ids, semister };
-
-  // Set debounce timer
-  submitHandlerRef.current = setTimeout(() => {
-    console.log("obj =>", obj);
-
-    // Optionally send the data
-    // axios.post('/api/group', obj);
-    // groupID="", groupName = "", groupTypes = "", groupMembers = [], semister = ""
-    
-  }, 3000);
-}
 
 
   return (

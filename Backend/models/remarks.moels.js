@@ -16,9 +16,10 @@ const remarksSchema = mongoose.Schema({
     remarks: {
         type: String,
         trim: true,
+        default: "",
     }
 }, {timestamps: true})
 
-const Remarks = ("Remarks", remarksSchema)
+const Remarks = mongoose.model("Remarks", remarksSchema)
 
 export default Remarks;

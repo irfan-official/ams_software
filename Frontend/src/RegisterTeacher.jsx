@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 import isValidEmail from "./library/validEmailChecker.js"
 import axios from "./library/axiosInstance.js"
+import { useNavigate } from 'react-router-dom'
 
 function RegisterTeacher() {
+
+  const navigate = useNavigate();
 
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
@@ -38,7 +41,21 @@ function RegisterTeacher() {
 
     console.log(obj)
 
-    let response = await axios.post('')
+    const newObj = {...obj}
+
+
+      let response = await axios.post("/auth/api/v1/supervisor/register",
+        newObj,
+        { withCredentials: true }
+      );
+
+      alert(response.data.message)
+
+      if(!response.data.success){
+        return navigate("/register/teacher")
+      }
+
+      navigate("/")
   }
 
   return (

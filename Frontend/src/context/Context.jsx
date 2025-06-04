@@ -11,6 +11,8 @@ function Context(props) {
   const [details, setDetails] = useState([])
   const [allGroup, setAllGroup] = useState([])
   const [userID, setUserID] = useState("")
+  const [currentGroupTypes, setCrrentGroupTypes] = useState("")
+    let [currentGroupID, setCurrentGroupID] = useState("")
   const [updateGroup, setUpdateGroup] = useState({
     groupID: "",
     groupName: "",
@@ -22,7 +24,7 @@ function Context(props) {
 
 
   return <UserContext.Provider 
-  value={{reportData, setReportData, details, setDetails, allGroup, setAllGroup, updateGroup, setUpdateGroup, errorMessage, setErrorMessage, userID, setUserID}}>
+  value={{reportData, setReportData, details, setDetails, allGroup, setAllGroup, updateGroup, setUpdateGroup, errorMessage, setErrorMessage, userID, setUserID, currentGroupTypes, setCrrentGroupTypes, currentGroupID, setCurrentGroupID}}>
     {props.children}
     </UserContext.Provider>
 }
