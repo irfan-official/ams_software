@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 function CreateGroup() {
 
 
-  let {userID, } = useContext(UserContext)
+  let { userID, } = useContext(UserContext)
 
   const navigate = useNavigate();
 
@@ -20,45 +20,51 @@ function CreateGroup() {
   const [groupMembers, setGroupMembers] = useState([""]);
   const [semister, setSemister] = useState("");
 
-async function handleSubmit(e) {
-  e.preventDefault();
+  const lastCalledRef = useRef(0);
+  const throttleDelay = 1000; // 1 second throttle
 
-  if (!groupName || !groupTypes || !semister) {
-    alert("All fields are required");
-    return;
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    if (!groupName || !groupTypes || !semister) {
+      alert("All fields are required");
+      return;
+    }
+
+    const now = Date.now();
+    if (now - lastCalledRef.current < throttleDelay) {
+      alert("please wait");
+      return;
+    }
+    lastCalledRef.current = now;
+
+    const ids = groupMembers.map((elem) => elem[0]);
+    const obj = { groupName, groupTypes, ids, semister };
+
+    try {
+      console.log("obj =>", obj);
+
+      const response = await axios.post(
+        "/group/api/v1/create-group",
+        {
+          groupName,
+          groupTypes,
+          groupMembers,
+          semister,
+        },
+        { withCredentials: true }
+      );
+
+      if (response.data.success) {
+        navigate("/");
+      } else {
+        alert("Something is not good");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Server error");
+    }
   }
-
-  // Always clear previous timeout
-  if (submitHandlerRef.current) {
-    clearTimeout(submitHandlerRef.current);
-  }
-
-  const ids = groupMembers.map((elem) => elem[0]);
-  const obj = { groupName, groupTypes, ids, semister };
-
-  // Set debounce timer
-  submitHandlerRef.current = setTimeout(async () => {
-    console.log("obj =>", obj);
-
-    // Optionally send the data
-    // axios.post('/api/group', obj);
-
-    alert("create group req send")
-
-    let response = await axios.post("/group/api/v1/create-group", {
-      groupName, groupTypes, groupMembers, semister
-    }, 
-      { withCredentials: true }
-    )
-
-   if(response.data.success){
-     navigate("/");
-     return;
-   }
-   alert("something is not good")
-
-  }, 3000);
-}
 
 
   return (

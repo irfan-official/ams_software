@@ -567,15 +567,21 @@ export const deleteReport = async (req, res, next) => {
 
         const { userID } = req.userID
 
-        await Report.findByIdAndDelete({ _id: reportID })
-
-        const reports = await Report.find({ supervisor: userID })
-
-        return res.status(200).json({
+        res.status(200).json({
             success: true,
-            responseData: reports,
+            reportID: reportID,
             message: "Deleted successfully"
         })
+
+        await Report.findByIdAndDelete({ _id: reportID })
+
+        await Report.find({ supervisor: userID })
+
+        await Comment.deleteMany({reportID})
+        await Signature.deleteMany({reportID})
+        await Remarks.deleteMany({reportID})
+
+
     } catch (error) {
         next(error)
     }
@@ -594,6 +600,7 @@ export const updateReport = async (req, res, next) => {
             return res.status(400).json({ error: "Missing reportID or fieldName" });
         }
 
+        let report = await Report.findById(reportID)
 
         if (fieldName === "week") {
             report.week = inputValue;
@@ -601,7 +608,7 @@ export const updateReport = async (req, res, next) => {
         }
 
         if (fieldName === "date") {
-            // Validate date format: DD/MM/YYYY
+
             const isValidDateFormat = /^\d{2}\/\d{2}\/\d{4}$/.test(inputValue);
             if (!isValidDateFormat) {
                 return res.status(400).json({ error: "Date must be in format DD/MM/YYYY (en-GB)" });

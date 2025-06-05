@@ -13,7 +13,7 @@ import axios from "./library/axiosInstance.js"
 
 function Overview() {
 
-  const groupID = useRef(localStorage.getItem("groupID")|| "");
+  const groupID = useRef(localStorage.getItem("groupID") || "");
 
   useEffect(() => {
     if (!groupID.current) {
@@ -23,18 +23,18 @@ function Overview() {
 
 
   let { reportData, setReportData } = useContext(UserContext)
-  let { details, setDetails , setCurrentGroupID} = useContext(UserContext)
+  let { details, setDetails, setCurrentGroupID } = useContext(UserContext)
 
 
   useEffect(() => {
 
-    async function initiate(params) {
+    async function initiate() {
       try {
 
         setCurrentGroupID(groupID.current)
 
         let response = await axios.post("/group/api/v1/group-report",
-          {groupID: groupID.current },
+          { groupID: groupID.current },
           { withCredentials: true }
         );
 
@@ -49,47 +49,21 @@ function Overview() {
         navigate("/")
         console.log(error)
       }
-    } 
+    }
     initiate()
 
   }, [])
 
   const navigate = useNavigate();
 
-  const timeoutRef = useRef(null);
-
   const presentArray = useRef([]);
   const supervisorCommentsArray = useRef([]);
   const remarksArray = useRef([]);
 
-  const [cpySdata, setCPYSdata] = useState(Sdata || [])
-  const [createdNewData, setCreatedNewData] = useState([])
-  const [changedReportPortion, setChangedReportPortion] = useState([
-
-    {
-      week: "",
-      clickStatus: false,
-    },
-    {
-      date: "",
-      clickStatus: false,
-    },
-    {
-      present: presentArray,
-      clickStatus: false,
-    },
-    {
-      supervisorComments: supervisorCommentsArray,
-      clickStatus: false,
-    },
-    {
-      remarks: remarksArray,
-      clickStatus: false,
-    }
-  ])
-
   const [click, setClick] = useState(false)
   const [show, setShow] = useState(false)
+  
+  const isDeleteThrottled = useRef(false); 
 
 
   useEffect(() => {
@@ -111,16 +85,6 @@ function Overview() {
     });
   }, [details])
 
-  useEffect(() => {
-    if (createdNewData.length > 0) {
-      let handler = setTimeout(() => {
-        //axios.post('', createdNewData)
-        console.log("createdData = ", createdNewData)
-        setCreatedNewData([])
-      }, 5000)
-      return () => clearTimeout(handler);
-    }
-  }, [cpySdata])
 
   async function updateDetailsData(_id, studentID, studentName, title) {
 
@@ -145,22 +109,29 @@ function Overview() {
     }
   }
 
-  async function deleteReport(reportID = "") {
+ async function deleteReport(reportID = "") {
+  if (!reportID || isDeleteThrottled.current) return;
 
-    if (!reportID) return
+  isDeleteThrottled.current = true; // Block further delete calls
 
-    try {
-      const responsedata = await axios.delete("/url", {
-        data: { reportID: reportID },
-        withCredentials: true
-      });
+  try {
+    const response = await axios.delete("/group/api/v1/delete-report", {
+      data: { reportID },
+      withCredentials: true,
+    });
 
-      setReportData(responsedata);
-
-    } catch (error) {
-      console.log("req details error => ", error);
+    if(response.data.success){
+      setReportData((prev) => prev.filter((obj) => String(obj._id !== response.data.reportID)))
     }
+
+  } catch (error) {
+    console.log("deleteReport error:", error);
+  } finally {
+    setTimeout(() => {
+      isDeleteThrottled.current = false; // Re-enable deletes after delay
+    }, 2000); // 2 seconds throttle
   }
+}
 
   async function getGroupReportForPrint(groupID = "") {
     try {
@@ -199,46 +170,6 @@ function Overview() {
     }
   }
 
-  async function updateReport(
-    groupID = "",
-    week = "",
-    date = "",
-    studentID = [],
-    studentSignature = [],
-    title = [],
-    supervisorComments = "",
-    remarks = "") {
-
-    try {
-      if (!week || !date || !studentID || !studentSignature || !title || !supervisorComments || !remarks) {
-        return;
-      }
-      let responsedata = await axios.patch("/url",
-        {
-          groupID,
-          week,
-          date,
-          studentID,
-          studentSignature,
-          title,
-          supervisorComments,
-          remarks
-        },
-        {
-          withCredentials: true
-        }
-      );
-
-      setReportData(responsedata.data.responseData)
-
-    } catch (error) {
-      console.log("req details error => ", error)
-    }
-
-
-  }
-
-
   function CSS(index = 0, Present_length = 0) {
     return {
       tdCSS: "h-10 align-middle p-2 border border-gray-300",
@@ -263,8 +194,42 @@ function Overview() {
 
   function changeIT(name, index_1, e) {
     setReportData((prev) => prev.map((item, index_2) => index_1 === index_2 ? { ...item, [name]: e.target.value.trim() } : item))
-    // setChangedReportPortion((prev) => prev.map((obj, index) => name === "week" ? {obj: } : obj))
   }
+
+  function useDebouncedUpdate(delay = 300) {
+    const debounceTimerRef = useRef(null);
+
+    const update = (reportID, studentID, fieldName, inputValue) => {
+      // Clear any previous timer
+      clearTimeout(debounceTimerRef.current);
+
+      // Set new timer
+      debounceTimerRef.current = setTimeout(async () => {
+        try {
+          const req = await axios.patch(
+            "/group/api/v1/update-report",
+            { groupID, reportID, studentID, fieldName, inputValue },
+            { withCredentials: true }
+          );
+
+          if (req.data.success) {
+            setReportData((prev) => prev.map((reportObj, index) => {
+              return req.data.responseData._id === reportData._id ? req.data.responseData : reportData
+            })
+            )
+          }
+
+          console.log("Updated:", studentID, fieldName, inputValue);
+        } catch (err) {
+          console.error("Update failed:", err);
+        }
+      }, delay);
+    };
+
+    return update;
+  }
+
+  const update = useDebouncedUpdate(300);
 
 
   return (
@@ -324,24 +289,32 @@ function Overview() {
                   ) => (
                     <tr key={index_1} className="">
                       <td className={CSS().tdCSS}>
+                         {/*_____________________week____________________________________*/ }
                         <input onChange={(e) => {
-                          {/*_____________________week____________________________________*/ }
+                          
                           changeIT("week", index_1, e);
 
-                          // // Clear the previous timer
-                          // if (timeoutRef.current) {
-                          //   clearTimeout(timeoutRef.current);
-                          // }
+                          let reportID = _id;
 
-                          // // Set new debounce timer
-                          // timeoutRef.current = setTimeout(() => {
-                          //   setCPYSdata((prev) => [...prev].sort((a, b) => a.week - b.week));
-                          // }, 7000);
+                          let STUDENT_ID = "";
+
+                          update(reportID, STUDENT_ID, "week", e.target.value)
+
 
                         }} className={CSS().inputBox} type="text" value={week} />
                       </td>
                       <td className={CSS().tdCSS}>  {/*_____________________date____________________________________*/}
-                        <input onChange={(e) => { changeIT("date", index_1, e) }} className={CSS().inputBox} type="text" value={date} />
+                        <input onChange={(e) => {
+
+                          let reportID = _id;
+
+                          let STUDENT_ID = "";
+
+                          update(reportID, STUDENT_ID, "date", e.target.value);
+
+                          changeIT("date", index_1, e)
+
+                        }} className={CSS().inputBox} type="text" value={date} />
                       </td>
                       <td className={CSS().tdCSS}>  {/*_____________________present____________________________________*/}
                         {present.map(({ studentID, presentStatus }, index) => (
@@ -354,7 +327,13 @@ function Overview() {
                               type="checkbox"
                               checked={presentStatus}
                               onChange={(e) => {
+
+                                let reportID = _id;
+
+                                update(reportID, studentID, "present", e.target.checked);
+
                                 const checked = e.target.checked;
+
                                 setReportData((prev) =>
                                   prev.map((item, weekIndex) => {
                                     if (weekIndex === index_1) {
@@ -381,6 +360,8 @@ function Overview() {
                           <h3 key={index} className={CSS(index, supervisorComments.length).h3}>
                             <input type="text"
                               onChange={(e) => {
+                                let reportID = _id;
+                                update(reportID, studentID, "supervisorComments", e.target.value);
                                 const inputvalue = e.target.value;
                                 setReportData((prev) =>
                                   prev.map((item, itemIndex) => {
@@ -408,6 +389,8 @@ function Overview() {
                           <h3 key={index} className={CSS(index, remarks.length).h3}>
                             <input type="text"
                               onChange={(e) => {
+                                let reportID = _id;
+                                update(reportID, studentID, "remarks", e.target.value);
                                 const inputvalue = e.target.value;
                                 setReportData((prev) =>
                                   prev.map((item, weekIndex) => {
@@ -429,7 +412,7 @@ function Overview() {
                       </td>
                       <td>  {/*_____________________||__deleteReport__||__________________________________*/}
                         <span
-                          onClick={() => deleteReport(/* _id */)}
+                          onClick={() => deleteReport( _id )}
                           className="scale-[250%] text-slate-500 hover:text-red-600 absolute ml-5">
                           <MdDeleteForever />
                         </span>
