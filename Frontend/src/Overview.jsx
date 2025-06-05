@@ -10,6 +10,7 @@ import { UserContext } from "./context/Context.jsx";
 import { useNavigate } from "react-router-dom";
 import NavDetails from "./NavDetails.jsx";
 import axios from "./library/axiosInstance.js"
+import DeleteReportButton from "./DeleteReportButton.jsx";
 
 function Overview() {
 
@@ -62,8 +63,14 @@ function Overview() {
 
   const [click, setClick] = useState(false)
   const [show, setShow] = useState(false)
-  
-  const isDeleteThrottled = useRef(false); 
+  const [delClick, setDelClick] = useState({
+    clickStatus: false,
+    reportID: "",
+    week: "",
+    date: "",
+  })
+
+  const isDeleteThrottled = useRef(false);
 
 
   useEffect(() => {
@@ -109,29 +116,39 @@ function Overview() {
     }
   }
 
- async function deleteReport(reportID = "") {
-  if (!reportID || isDeleteThrottled.current) return;
+  async function deleteReport(reportID = "") {
+    if (!reportID || isDeleteThrottled.current) return;
 
-  isDeleteThrottled.current = true; // Block further delete calls
+    isDeleteThrottled.current = true; // Block further delete calls
 
-  try {
-    const response = await axios.delete("/group/api/v1/delete-report", {
-      data: { reportID },
-      withCredentials: true,
-    });
+    setDelClick({
+      clickStatus: false,
+      reportID: "",
+      week: "",
+      date: "",
+    })
 
-    if(response.data.success){
-      setReportData((prev) => prev.filter((obj) => String(obj._id !== response.data.reportID)))
+    try {
+      const response = await axios.delete("/group/api/v1/delete-report", {
+        data: { reportID },
+        withCredentials: true,
+      });
+
+      if (response.data.success) {
+        setReportData((prev) => prev.filter((obj) => String(obj._id) !== String(response.data.reportID)))
+
+      }
+
+    } catch (error) {
+      console.log("deleteReport error:", error);
+      alert(error.message)
+    } finally {
+      setTimeout(() => {
+        isDeleteThrottled.current = false; // Re-enable deletes after delay
+      }, 2000); // 2 seconds throttle
     }
-
-  } catch (error) {
-    console.log("deleteReport error:", error);
-  } finally {
-    setTimeout(() => {
-      isDeleteThrottled.current = false; // Re-enable deletes after delay
-    }, 2000); // 2 seconds throttle
   }
-}
+
 
   async function getGroupReportForPrint(groupID = "") {
     try {
@@ -235,6 +252,10 @@ function Overview() {
   return (
     <div className="w-full min-h-screen flex  items-center bg-gray-50 flex-col">
 
+      {
+        delClick.clickStatus ? <DeleteReportButton reportID={delClick.reportID} week={delClick.week} date={delClick.date} deleteReport={deleteReport} setDelClick={setDelClick} /> : <></>
+      }
+
       <NavDetails CSS={CSS} updateDetailsData={updateDetailsData} click={click} setClick={setClick} setShow={setShow} show={show} />
 
       <form className="w-[90%]" >
@@ -289,9 +310,9 @@ function Overview() {
                   ) => (
                     <tr key={index_1} className="">
                       <td className={CSS().tdCSS}>
-                         {/*_____________________week____________________________________*/ }
+                        {/*_____________________week____________________________________*/}
                         <input onChange={(e) => {
-                          
+
                           changeIT("week", index_1, e);
 
                           let reportID = _id;
@@ -412,7 +433,7 @@ function Overview() {
                       </td>
                       <td>  {/*_____________________||__deleteReport__||__________________________________*/}
                         <span
-                          onClick={() => deleteReport( _id )}
+                          onClick={() => setDelClick((prev) => ({ ...prev, week, date, reportID: _id, clickStatus: !prev.clickStatus }))}
                           className="scale-[250%] text-slate-500 hover:text-red-600 absolute ml-5">
                           <MdDeleteForever />
                         </span>
