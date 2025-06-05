@@ -18,7 +18,6 @@ const titleSchema = mongoose.Schema({
     studentID: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Student",
-        required: true
     }],
     supervisor: {
         type: mongoose.Schema.Types.ObjectId,

@@ -6,6 +6,10 @@ const commentSchema = mongoose.Schema({
         ref: "Group",
         required: true,
     },
+    reportID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Report",
+    },
     studentID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Student",
@@ -21,7 +25,7 @@ const commentSchema = mongoose.Schema({
         trim: true,
         default: "",
     }
-}, {timestamps: true})
+}, { timestamps: true })
 
 const Comment = mongoose.model("Comment", commentSchema)
 

@@ -6,6 +6,10 @@ const signatureSchema = mongoose.Schema({
         ref: "Student",
         required: true
     },
+    reportID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Report",
+    },
     signature: {
         type: String,
         trim: true,

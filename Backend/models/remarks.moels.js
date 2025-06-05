@@ -5,6 +5,10 @@ const remarksSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Group"
     },
+    reportID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Report",
+    },
     studentID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Student"
@@ -18,7 +22,7 @@ const remarksSchema = mongoose.Schema({
         trim: true,
         default: "",
     }
-}, {timestamps: true})
+}, { timestamps: true })
 
 const Remarks = mongoose.model("Remarks", remarksSchema)
 
