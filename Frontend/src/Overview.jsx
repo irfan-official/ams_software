@@ -289,7 +289,7 @@ function Overview() {
                 </tr>
               </thead>
 
-              <tbody className="border-none outline-0">
+              <tbody className={`border-none outline-0 `}>
                 {/*_____________________Report start Here____________________________________*/}
                 {reportData.map(
                   (
@@ -308,7 +308,7 @@ function Overview() {
                     },
                     index_1
                   ) => (
-                    <tr key={index_1} className="">
+                    <tr key={index_1} className={`${delClick.clickStatus ? _id === delClick.reportID ? "bg-red-600" : "" : ""}`}>
                       <td className={CSS().tdCSS}>
                         {/*_____________________week____________________________________*/}
                         <input onChange={(e) => {
