@@ -53,7 +53,7 @@ function Overview() {
     }
     initiate()
 
-  }, [])
+  }, [groupID.current])
 
   const navigate = useNavigate();
 
@@ -268,9 +268,9 @@ function Overview() {
                     {"Thesis Title"} (8th semister)
                   </u>
                 </strong>
-                <button onClick={() => getGroupReportForPrint(/* groupID */)} className="px-7 py-3 bg-slate-600 text-white text-[1rem] rounded-md absolute top-[-2] right-5 shadow-[0_2px_6px_rgba(0,0,0,0.4)] border border-gray-300">
+                <NavLink to="/report" className="px-7 py-3 bg-slate-600 text-white text-[1rem] rounded-md absolute top-[-2] right-5 shadow-[0_2px_6px_rgba(0,0,0,0.4)] border border-gray-300">
                   Report
-                </button>
+                </NavLink>
               </caption>
 
               <thead className="border-none">

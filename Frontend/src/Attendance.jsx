@@ -1,13 +1,21 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
+import { UserContext } from "./context/Context.jsx";
 
 import Sdata from "./seeds/sampleAttandence.json" with { type: "json" };
 
-function Attendance(data = {}) {
+function Attendance() {
+
+  let { reportData, setReportData } = useContext(UserContext)
+
+  useEffect(()=> {
+    console.log("reportData = ", reportData)
+  },[])
+
   return (
     <div className="overflow-x-auto p-4 min-w-[85%] ">
       <table className="table-auto border border-black w-full xl:text-[1vw] sm:text-[2vw]">
         <caption className="sm:text-[3vw] xl:text-[1.5vw] sm:mb-4 xl:mb-8"><strong><u className="">Progress Report for “Thesis Title” (8th semister)</u></strong></caption>
-        
+
         <thead>
           <tr className="bg-gray-100">
             <th className="border border-black p-2">Week</th>
@@ -19,51 +27,62 @@ function Attendance(data = {}) {
           </tr>
         </thead>
         <tbody className="">
-            {
-              Sdata.map(({week, Date, StudentID, Present, studentSignature, supervisorComments, remarks}, index) => 
-          <tr className="border-black sm:border-b-2 xl:border-b-3">
-            <td className="border border-black align-middle  p-2"><h2 className="p-2">{week}.</h2></td>
-            <td className="border border-black align-middle p-2"><h2 className="p-2">{Date}</h2></td>
-            <td className="border border-black align-middle">
-            <td className="align-middle flex flex-col">
-                    {Present.map(({ studentID, status }, index) => (
-                      <>
+          {
+            reportData.map(
+              (
+                {
+                   week, date, studentID, present, studentSignature, supervisorComments, remarks 
+                }, 
+                index_1) =>
+              <tr key={index_1} className="border-black">
+                <td className="border border-black align-middle  p-2"><h2 className="p-2">{week}.</h2></td>
+                <td className="border border-black align-middle p-2"><h2 className="p-2">{date}</h2></td>
+                <td className="border border-black align-middle">
+                  <td className="align-middle flex flex-col">
+                    {present.map(({ studentID, presentStatus }, index) => (
+                      <span key={index}>
                         <h3 className="p-2 h-10 flex item-center">
                           <p className="flex items-center justify-center text-center">
-                            {studentID}
+                            {studentID.studentID}
                           </p>
-                          {status ? (
+                          {presentStatus ? (
                             <></>
                           ) : (
                             <p className="flex items-center justify-center text-center  ml-1">
-                              {" "}
                               (A)
                             </p>
                           )}
-  
+
                         </h3>
-                        {index + 1 != Present.length ? <hr /> : <></>}{" "}
-                      </>
+                        {index + 1 != present.length ? <hr /> : <></>}
+                      </span>
                     ))}
                   </td>
-              </td>
-            <td className="border border-black align-top ">
-              {
-                studentSignature.map(({studentID, signature}, index) => <><h3 className=" p-2 h-10">{signature}</h3> {index+1 != studentSignature.length ? <hr/> : <></>} </>)
-              }
-            </td>
-            <td className="border border-black align-top">
-                          {
-                supervisorComments.map(({studentID, comment}, index) => <><h3 className="p-2 h-10">{comment}</h3> {index+1 != supervisorComments.length ? <hr/> : <></>} </>)
-              }
-            </td>
-            <td className="border border-black align-top">
-                          {
-                remarks.map(({studentID, remarks}, index) => <><h3 className="p-2 h-10">{remarks}</h3> {index+1 != remarks.length ? <hr/> : <></>} </>)
-              }
-            </td>
-          </tr>)
-            }
+                </td>
+                <td className="border border-black  ">
+                  {
+                    studentSignature.map(({ studentID, signature }, index) => <>
+                    <h3 className=" p-2 h-10">{""}</h3>
+                     {index + 1 != studentSignature.length ? <hr /> : <></>} </>)
+                  }
+                </td>
+                <td className="border border-black ">
+                  {
+                    supervisorComments.map(({ studentID, comment }, index) => <>
+                    <h3 className="p-2 h-10">{comment.comment}</h3>
+                     {index + 1 != supervisorComments.length ? <hr />
+                      : <></>} </>)
+                  }
+                </td>
+                <td className="border border-black">
+                  {
+                    remarks.map((obj, index) => <>
+                    <h3 className="p-2 h-10 ">{obj.remarks.remarks}</h3>
+                     {remarks.length != index+1 ? <hr /> : null} </>)
+                  }
+                </td>
+              </tr>)
+          }
         </tbody>
       </table>
     </div>
