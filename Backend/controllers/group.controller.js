@@ -9,6 +9,7 @@ import Signature from "../models/signature.model.js"
 import Supervisor from "../models/supervisor.models.js"
 import Comment from "../models/comment.model.js"
 import Remarks from "../models/remarks.moels.js"
+import { populate } from "dotenv"
 
 
 export const allGroup = async (req, res, next) => {
@@ -382,7 +383,10 @@ export const groupReport = async (req, res, next) => {
                 select: "studentID name"
             }, {
                 path: "title.title",
-                select: "title"
+                select: "title groupTypes connectedGroup",
+            }, {
+                path: "group",
+                select: "title",
             }
         ])
 
@@ -394,10 +398,13 @@ export const groupReport = async (req, res, next) => {
 
             responseData2.push(
                 {
+                    "student_ObjID": student._id,
+                    "title_ObjID": title._id,
                     "studentID": student.studentID,
                     "studentName": student.name,
-                    "courseType": group.groupTypes,
-                    "title": title.title
+                    "courseType": group.groupTypes, //
+                    "title": title.title,
+                    "main_group_ObjectID": group._id,
                 }
             )
         }
@@ -577,9 +584,9 @@ export const deleteReport = async (req, res, next) => {
 
         await Report.find({ supervisor: userID })
 
-        await Comment.deleteMany({reportID})
-        await Signature.deleteMany({reportID})
-        await Remarks.deleteMany({reportID})
+        await Comment.deleteMany({ reportID })
+        await Signature.deleteMany({ reportID })
+        await Remarks.deleteMany({ reportID })
 
 
     } catch (error) {
@@ -708,6 +715,107 @@ export const updateReport = async (req, res, next) => {
             responseData: newReportDoc,
             message: "Document update successfully"
         });
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const updateDetails = async (req, res, next) => {
+    try {
+
+        const { title_ObjID, student_ObjID, main_group_ObjectID, fieldName, inputValue } = req.body;
+
+        // console.log("body ==> ", req.body)
+
+        // id is either Title_ObjectID or student_ObjectID
+
+        const { userID } = req.userID;
+
+        const student = await Student.findOne({_id: student_ObjID})
+
+        // console.log("student => ", student)
+
+        if (fieldName === "studentName") {
+
+            if (!student) {
+                throw new CustomError("Student not exist", 401, Internal)
+            }
+
+            res.status(201).json({
+                success: true,
+                message: "Name update successfully"
+            })
+
+            student.name = inputValue;
+            await student.save();
+        }
+
+        if (fieldName === "title") {
+
+            let group = await Group.findById(main_group_ObjectID);
+
+            const title = await Title.findById(title_ObjID)
+
+            if (!title) {
+                throw new CustomError("title not exist", 401, Internal)
+            }
+
+            const foundTitle = await Title.findOne({
+                title: inputValue,
+                supervisor: userID,
+                studentID: { $in: [student_ObjID] },
+            })
+
+            if (!foundTitle) {
+
+                const createTitle = await Title.create({
+                    title: inputValue,
+                    connectedGroup: main_group_ObjectID,
+                    groupTypes: group.groupTypes,
+                    studentID: [student_ObjID],
+                    supervisor: userID,
+                })
+
+
+                for (let i = 0; i < group.title.length; i++) {
+                    if (String(group.title[i].student) === String(student_ObjID)) {
+                        group.title[i].title = createTitle._id;
+                    }
+                }
+                await group.save();
+
+                for (let i = 0; i < student.associate.length; i++) {
+                    if (String(student.associate[i].groupName) === String(main_group_ObjectID)) {
+                        student.associate[i].title = createTitle._id;
+                    }
+                }
+                await student.save();
+
+            }
+            else{
+                for (let i = 0; i < group.title.length; i++) {
+                    if (String(group.title[i].student) === String(student_ObjID)) {
+                        group.title[i].title = foundTitle._id;
+                    }
+                }
+                await group.save();
+
+                for (let i = 0; i < student.associate.length; i++) {
+                    if (String(student.associate[i].groupName) === String(group.connectedGroup)) {
+                        student.associate[i].title = foundTitle._id;
+                    }
+                }
+                await student.save();
+            }
+
+            res.status(201).json({
+                success: true,
+                message: "Name update successfully"
+            })
+
+        }
+
 
     } catch (error) {
         next(error)

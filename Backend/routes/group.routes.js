@@ -1,6 +1,6 @@
 import express from "express"
 import {AuthorizationMiddleware} from "../middlewares/authorization.middlewares.js"
-import { allGroup, createGroup, updateGroup, deleteGroup, groupReport, createReport, updateReport, deleteReport} from "../controllers/group.controller.js";
+import { allGroup, createGroup, updateGroup, deleteGroup, groupReport, createReport, updateReport, deleteReport, updateDetails} from "../controllers/group.controller.js";
 import {createGroupMiddleware, createReportMiddleware, updateGroupMiddleware} from "../middlewares/group.middleware.js"
 
 
@@ -16,6 +16,8 @@ route.patch("/update-group", updateGroupMiddleware ,updateGroup)
 
 route.delete("/delete-group", deleteGroup) 
 
+
+route.patch("/update-details", updateDetails)
 
 
 route.post("/group-report", groupReport)

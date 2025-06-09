@@ -93,25 +93,40 @@ function Overview() {
   }, [details])
 
 
-  async function updateDetailsData(_id, studentID, studentName, title) {
+  async function updateDetailsData(title_ObjID, student_ObjID, fieldName, inputValue, main_group_ObjectID) {
 
-    if (!studentID || !studentName || !title) return
+    if (!fieldName || !inputValue) {
+      return alert("field name or title name required")
+    }
+
+    alert("sendind data")
+    console.log("data => ", {
+      title_ObjID,
+      student_ObjID,
+      fieldName,
+      inputValue,
+      main_group_ObjectID
+    })
 
     try {
-      let responsedata = await axios.patch("/url",
+      let response = await axios.patch("/group/api/v1/update-details",
         {
-          // reportID: _id,
-          studentID,
-          studentName,
-          title
+          title_ObjID,
+          student_ObjID,
+          fieldName,
+          inputValue,
+          main_group_ObjectID
         },
         {
           withCredentials: true
         }
       );
 
-      setDetails(responsedata)
+      if (response.data.success) {
+        alert(response.data.message)
+      }
     } catch (error) {
+      alert(error.message)
       console.log("req details error => ", error)
     }
   }

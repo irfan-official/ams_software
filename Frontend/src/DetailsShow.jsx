@@ -25,7 +25,7 @@ function DetailsShow({ CSS, updateDetailsData, show }) {
         </thead>
 
         <tbody>
-          {details.map(({ _id, studentID, studentName, title }, index) => <tr key={index}>
+          {details.map(({ student_ObjID, title_ObjID, studentID, studentName, courseType, title, main_group_ObjectID }, index) => <tr key={index}>
             <td className={` ${CSS().optionalDisplay} h-10 p-2`}>{index + 1}.</td>
             <td className={` ${CSS().optionalDisplay} h-10 p-2`}>{studentID}</td>
 
@@ -44,7 +44,7 @@ function DetailsShow({ CSS, updateDetailsData, show }) {
                   type="text" />
                 <span className="w-[10%] h-full flex justify-center items-center">
                   <span
-                    onClick={() => updateDetailsData(/*_id, */ studentID, studentName, title)}
+                    onClick={() => updateDetailsData(title_ObjID, student_ObjID, "studentName", studentName, main_group_ObjectID)}
                     className="scale-150 text-slate-400 hover:text-lime-400 cursor-pointer">
                     <FaRegCheckCircle />
                   </span>
@@ -67,7 +67,7 @@ function DetailsShow({ CSS, updateDetailsData, show }) {
 
                 <span className="w-[10%] h-full flex justify-center items-center">
                   <span
-                    onClick={() => updateDetailsData(_id, studentID, studentName, title)}
+                    onClick={() => updateDetailsData(title_ObjID, student_ObjID, "title", title, main_group_ObjectID)}
                     className="scale-150 text-slate-400 hover:text-lime-400 cursor-pointer">
                     <FaRegCheckCircle />
                   </span>
