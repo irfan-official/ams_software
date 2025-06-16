@@ -57,9 +57,9 @@ function Report() {
         <strong className="font-semibold">QUADIRANBAD, NATORE-6431</strong>
         <button
           onClick={() => window.print()}
-          className="px-4 py-2 bg-slate-500 text-[1rem] text-white  hover:bg-blue-700 absolute  bottom-0 right-28 shadow-[0_2px_6px_rgba(0,0,0,0.4)] border border-gray-300 rounded-md xl:visible sm:invisible"
+          className="px-4 py-2 bg-slate-500 text-[1rem] text-white  hover:bg-blue-700 absolute  bottom-0 right-28 shadow-[0_2px_6px_rgba(0,0,0,0.4)] border border-gray-300 rounded-md xl:visible sm:invisible flex justify-center items-center"
         >
-          Print Page
+          Print to PDF
         </button>
       </h3>
       <br />
