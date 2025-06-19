@@ -218,7 +218,7 @@ function Overview() {
 
       inputBox1: "border-none w-full h-full rounded-md pl-2 focus:bg-gray-500 focus:outline-0 focus:text-white",
 
-      ButtonCss: "w-full h-10 flex items-center justify-center mt-2 mb-7 border border-gray-300 rounded-md hover:bg-slate-200 shadow-[0_2px_6px_rgba(0,0,0,0.5)]",
+      ButtonCss: "w-full h-10 flex items-center justify-center mt-2 mb-7 border border-gray-300 rounded-md hover:bg-slate-200 shadow-[0_2px_6px_rgba(0,0,0,0.5)] cursor-pointer",
 
       optionalDisplay: "border border-dotted border-gray-400"
     }
@@ -354,12 +354,12 @@ function Overview() {
                       </td>
                       <td className={CSS().tdCSS}>  {/*_____________________present____________________________________*/}
                         {present.map(({ studentID, presentStatus }, index) => (
-                          <h3 key={index} className={`${CSS(index, present.length).h3} p-2`}>
+                          <h3 key={index} className={`${CSS(index, present.length).h3} p-2 `}>
                             <p className={CSS().p}>
                               {studentID.studentID}
                             </p>
                             <input
-                              className="w-5"
+                              className="w-5 cursor-pointer"
                               type="checkbox"
                               checked={presentStatus}
                               onChange={(e) => {
@@ -449,7 +449,7 @@ function Overview() {
                       <td>  {/*_____________________||__deleteReport__||__________________________________*/}
                         <span
                           onClick={() => setDelClick((prev) => ({ ...prev, week, date, reportID: _id, clickStatus: !prev.clickStatus }))}
-                          className="scale-[250%] text-slate-500 hover:text-red-600 absolute ml-5">
+                          className="scale-[250%] text-slate-500 hover:text-red-600 absolute ml-5 cursor-pointer">
                           <MdDeleteForever />
                         </span>
                       </td>

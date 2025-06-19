@@ -13,7 +13,7 @@ function NavDetails({
     <div
       className={`w-[80%] md:h-[4vw] 2xl:h-[3vw] ${
         click ? "sticky" : "relative"
-      } top-0 z-[100] flex justify-center items-center`}
+      } top-0 z-[100] flex justify-center items-center cursor-pointer`}
     >
       <div
         className="w-full h-full flex justify-center items-center bg-slate-950 border-2 rounded-full mt-4 mb-2  relative z-10
