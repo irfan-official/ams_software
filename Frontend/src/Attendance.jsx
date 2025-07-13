@@ -31,7 +31,7 @@ function Attendance() {
             reportData.map(
               (
                 {
-                   week, date, studentID, present, studentSignature, supervisorComments, remarks 
+                   week, date, students, present, studentSignature, supervisorComments, remarks 
                 }, 
                 index_1) =>
               <tr key={index_1} className="border-black">
@@ -39,11 +39,11 @@ function Attendance() {
                 <td className="border border-black align-middle p-2"><h2 className="p-2">{date}</h2></td>
                 <td className="border border-black align-middle">
                   <td className="align-middle flex flex-col">
-                    {present.map(({ studentID, presentStatus }, index) => (
+                    {present.map(({ student, presentStatus }, index) => (
                       <span key={index}>
                         <h3 className="p-2 h-10 flex item-center">
                           <p className="flex items-center justify-center text-center">
-                            {studentID.studentID}
+                            {student.studentID}
                           </p>
                           {presentStatus ? (
                             <></>
@@ -61,14 +61,14 @@ function Attendance() {
                 </td>
                 <td className="border border-black  ">
                   {
-                    studentSignature.map(({ studentID, signature }, index) => <>
+                    studentSignature.map(({ student, signature }, index) => <>
                     <h3 className=" p-2 h-10">{""}</h3>
                      {index + 1 != studentSignature.length ? <hr /> : <></>} </>)
                   }
                 </td>
                 <td className="border border-black ">
                   {
-                    supervisorComments.map(({ studentID, comment }, index) => <>
+                    supervisorComments.map(({ student, comment }, index) => <>
                     <h3 className="p-2 h-10">{comment.comment}</h3>
                      {index + 1 != supervisorComments.length ? <hr />
                       : <></>} </>)

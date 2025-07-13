@@ -1,823 +1,960 @@
-
-import Group from "../models/group.models.js"
-import CustomError from "../utils/ErrorHandling.js"
-import { Internal, External } from "../utils/ErrorTypesCode.js"
-import Report from "../models/report.models.js"
-import Title from "../models/title.model.js"
-import Student from "../models/student.models.js"
-import Signature from "../models/signature.model.js"
-import Supervisor from "../models/supervisor.models.js"
-import Comment from "../models/comment.model.js"
-import Remarks from "../models/remarks.moels.js"
-
-
+import Group from "../models/group.models.js";
+import CustomError from "../utils/ErrorHandling.js";
+import { Internal, External } from "../utils/ErrorTypesCode.js";
+import Report from "../models/report.models.js";
+import Title from "../models/title.model.js";
+import Student from "../models/student.models.js";
+import Signature from "../models/signature.model.js";
+import Supervisor from "../models/supervisor.models.js";
+import Comment from "../models/comment.model.js";
+import Remarks from "../models/remarks.moels.js";
 
 export const allGroup = async (req, res, next) => {
+  try {
+    const { userID } = req.userID;
 
-    try {
-
-        const { userID } = req.userID;
-
-        if (!userID) {
-            throw new CustomError("Please Login ", 401, Internal)
-        }
-
-        const groups = await Group.find({ supervisor: userID })
-            .populate([
-                {
-                    path: "group",
-                    select: "title"
-                },
-                {
-                    path: "supervisor",
-                    select: "name"
-                },
-                {
-                    path: "title.student",
-                    select: "name studentID"
-                },
-                {
-                    path: "title.title",
-                    select: "title"
-                }
-            ])
-            .populate({
-                path: "groupMembers",
-                select: "studentID"
-            }).lean()
-
-        return res.status(200).json({
-            success: true,
-            message: "",
-            responseData: groups || [],
-            userID: userID
-        })
-
-    } catch (error) {
-        next(error)
+    if (!userID) {
+      throw new CustomError("Please Login ", 401, Internal);
     }
-}
 
-export const createGroup = async (req, res, next) => {
-    try {
-        const { groupName, groupTypes, groupMembers, semister } = req.user;
-        const { userID } = req.userID;
+    const groups = await Group.find({ supervisor: userID }).populate([
+      {
+        path: "title",
+        select: "name",
+      },
+      {
+        path: "supervisor",
+        select: "name",
+      },
+      {
+        path: "title.student",
+        select: "name studentID",
+      },
+      {
+        path: "title.title",
+        select: "name",
+      },
+      {
+        path: "groupMembers.student",
+        select: "studentID name semister department",
+      },
+    ]);
 
-        const titleOfGroup = await Title.create({
-            title: groupName,
-            groupTypes: groupTypes,
-            supervisor: userID
-        });
-
-        const createdGroup = await Group.create({
-            supervisor: userID,
-            group: titleOfGroup._id,
-            groupTypes: groupTypes,
-            semister: semister
-        });
-
-        // ✅ Send response FIRST
-        res.status(201).json({
-            success: true,
-            message: `Group ${groupName} created Successfully`,
-            responseData: createdGroup || [],
-        });
-
-        // ✅ Background work (no response logic here)
-        (async () => {
-            try {
-                let IDArray = [];
-                let TitleArray = [];
-
-                for (let sID of groupMembers) {
-                    if (!sID) continue;
-
-                    let student = await Student.findOne({ studentID: sID });
-
-                    if (!student) {
-                        student = await Student.create({ studentID: sID });
-                        const signature = await Signature.create({
-                            ID: student._id,
-                            signature: "",
-                        });
-                        student.signature = signature._id;
-                        await student.save();
-                    }
-
-                    IDArray.push(student._id);
-                }
-
-                for (let _id of IDArray) {
-                    TitleArray.push({ student: _id, title: titleOfGroup._id });
-                }
-
-                createdGroup.groupMembers = IDArray;
-                createdGroup.title = TitleArray;
-                await createdGroup.save();
-
-                titleOfGroup.connectedGroup = createdGroup._id;
-                titleOfGroup.studentID = IDArray;
-                await titleOfGroup.save();
-
-                await Supervisor.findByIdAndUpdate(
-                    userID,
-                    { $push: { groups: createdGroup._id } },
-                    { new: true }
-                );
-
-                for (let sID of IDArray) {
-                    await Student.findByIdAndUpdate(
-                        sID,
-                        {
-                            $push: {
-                                associate: {
-                                    groupName: createdGroup._id,
-                                    title: createdGroup._id,
-                                },
-                            },
-                        },
-                        { new: true }
-                    );
-                }
-            } catch (bgErr) {
-                console.error("Background group creation error:", bgErr);
-            }
-        })();
-
-    } catch (error) {
-        next(error);
-    }
+    return res.status(200).json({
+      success: true,
+      message: "",
+      responseData: groups || [],
+      userID: userID,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
+export const createGroup = async (req, res, next) => {
+  try {
+    const { groupName, groupTypes, groupMembers, semister } = req.user;
+    const { userID } = req.userID;
+
+    const titleOfGroup = await Title.create({
+      name: groupName,
+      groupTypes: groupTypes,
+      supervisor: userID,
+    });
+
+    const createdGroup = await Group.create({
+      supervisor: userID,
+      title: titleOfGroup._id,
+      groupTypes: groupTypes,
+      semister: semister,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: `Group ${groupName} created Successfully`,
+      responseData: createdGroup || [],
+    });
+
+    (async () => {
+      try {
+        let _IDArray = [];
+        let TitleArray = [];
+        let GroupMembers = [];
+
+        for (let { designation, student } of groupMembers) {
+          let checkStudent = await Student.findOne({
+            studentID: student.studentID,
+          });
+
+          if (!checkStudent) {
+            checkStudent = await Student.create({
+              studentID: student.studentID,
+              name: student.name,
+              semister: student.semister,
+              department: student.department,
+            });
+
+            const signature = await Signature.create({
+              student: checkStudent._id,
+              signature: "",
+            });
+            checkStudent.signature = signature._id;
+            await checkStudent.save();
+          }
+
+          _IDArray.push(checkStudent._id);
+
+          GroupMembers.push({
+            student: checkStudent._id,
+            designation: designation,
+          });
+        }
+
+        for (let { student: _id } of GroupMembers) {
+          TitleArray.push({ student: _id, title: titleOfGroup._id });
+        }
+
+        createdGroup.groupMembers = GroupMembers;
+        createdGroup.titles = TitleArray;
+        await createdGroup.save();
+
+        titleOfGroup.connectedGroup = createdGroup._id;
+        titleOfGroup.students = _IDArray;
+        await titleOfGroup.save();
+
+        await Supervisor.findByIdAndUpdate(
+          userID,
+          { $push: { groups: createdGroup._id } },
+          { new: true }
+        );
+
+        for (let sID of _IDArray) {
+          await Student.findByIdAndUpdate(
+            sID,
+            {
+              $push: {
+                associateGroups: createdGroup._id,
+              },
+            },
+            { new: true }
+          );
+        }
+      } catch (bgErr) {
+        console.error("Background group creation error:", bgErr);
+      }
+    })();
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const updateGroup = async (req, res, next) => {
+  try {
+    const {
+      groupID,
+      groupName,
+      groupTypes,
+      groupMembers,
+      updateTypes,
+      semister,
+    } = req.user;
 
-    try {
-        const { groupID, groupName, groupTypes, groupMembers, semister } = req.user;
+    const { userID } = req.userID;
 
-        console.log("updateGroup == > ", req.user)
+    const group = await Group.findOne({ _id: groupID }).populate({
+      path: "title",
+      select: "name",
+    });
 
-        const { userID } = req.userID;
-
-        const group = await Group.findOne({ _id: groupID }).populate({
-            path: "group",
-            select: "title"
-        })
-
-        if (!group) {
-            throw new CustomError("Invalid group", 401, External)
-        }
-
-        let sIDArray = []
-        let TitleArray = [];
-
-        for (let sID of groupMembers) {
-
-            let checkStudent = await Student.findOne({ studentID: sID })
-
-            if (!checkStudent) {
-                const createdStudent = await Student.create({
-                    studentID: sID,
-                })
-
-                const signature = await Signature.create({
-                    ID: createdStudent._id,
-                    signature: "",
-                })
-
-                createdStudent.signature = signature._id;
-
-                await createdStudent.save();
-
-                sIDArray.push(createdStudent._id)
-
-                TitleArray.push({
-                    student: createdStudent._id,
-                    title: group.group.title
-                })
-            } else {
-
-                let findTitle = group.title.filter((obj) => {
-                    return obj.student.toString() === checkStudent._id.toString()
-                })
-
-                sIDArray.push(checkStudent._id)
-                TitleArray.push({
-                    student: checkStudent._id,
-                    title: findTitle[0].title
-                })
-            }
-        }
-
-
-        const updatedGroup = await Group.findByIdAndUpdate(
-            groupID,
-            {
-                groupTypes,
-                groupMembers: sIDArray,
-                title: TitleArray,
-                semister,
-            },
-            { new: true } // returns the updated document
-        );
-
-        const updatedTitle = await Title.findByIdAndUpdate(updatedGroup.group, {
-            title: groupName,
-            groupTypes,
-            studentID: sIDArray,
-        })
-
-        return res.status(200).json({
-            success: true,
-            message: "Group update successfully",
-            responseData: updatedGroup,
-        })
-    } catch (error) {
-        next(error)
+    if (!group) {
+      throw new CustomError("Invalid group", 401, External);
     }
 
-}
+    let title = await Title.findOne({
+      connectedGroup: group._id,
+    });
+
+    if (group.title.name != groupName) {
+      title.name = groupName;
+      await title.save();
+    }
+
+    if (group.groupTypes != groupTypes) {
+      group.groupTypes = groupTypes;
+      await group.save();
+    }
+
+    if (group.semister != semister) {
+      group.semister = semister;
+      await group.save();
+    }
+
+    let modifiedGroupMembers = [];
+    let modifiedTitles = [];
+    let newStudents = [];
+
+    for (let { student, designation } of groupMembers) {
+      let checkStudent = await Student.findOne({
+        studentID: student.studentID,
+      });
+
+      let studentID = checkStudent?._id || "";
+      let newTitle = title?._id || "";
+
+      if (checkStudent) {
+        if (checkStudent.name != student.name) {
+          checkStudent.name = student.name;
+          await checkStudent.save();
+        }
+        if (checkStudent.semister != student.semister) {
+          checkStudent.semister = student.semister;
+          await checkStudent.save();
+        }
+        if (checkStudent.department != student.department) {
+          checkStudent.department = student.department;
+          await checkStudent.save();
+        }
+
+        let titleObj = group.titles.filter((item, index) => {
+          return String(item.student) === String(studentID);
+        });
+
+        newTitle = titleObj[0]?.title || group.title._id; ////////////////////////////////////////
+
+        newStudents.push(checkStudent._id);
+      }
+
+      if (!checkStudent) {
+        let newStudent = await Student.create({
+          studentID: student.studentID,
+          name: student.name,
+          semister: student.semister,
+          department: student.department,
+        });
+
+        let signature = await Signature.create({
+          student: newStudent._id,
+          signature: "",
+        });
+
+        newStudent.signature = signature._id;
+        newStudent.associate = [
+          {
+            group: group._id,
+          },
+        ];
+        await newStudent.save();
+
+        const updatedTitle = await Title.findOneAndUpdate(
+          { connectedGroup: groupID },
+          { $addToSet: { students: newStudent._id } },
+          { new: true }
+        );
+
+        newTitle = updatedTitle._id;
+
+        studentID = newStudent._id;
+        newStudents.push(newStudent._id);
+      }
+      /////////////////////////////////////////////////////////////////////////////////////////
+      modifiedTitles.push({
+        student: studentID,
+        title: newTitle,
+      });
+
+      modifiedGroupMembers.push({
+        student: studentID,
+        designation: designation,
+      });
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////
+
+    group.groupMembers = modifiedGroupMembers;
+
+    group.titles = modifiedTitles;
+
+    await group.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Group update successfully",
+    });
+
+    if (updateTypes === "Change only from current report") {
+      return;
+    }
+
+    let report = await Report.find({ group: groupID });
+
+    if (report.length >= 1) {
+      for (let instance of report) {
+        let newPresent = [];
+        let newSupervisorComments = [];
+        let newRemarks = [];
+        let newStudentSignature = [];
+
+        for (let _ID of newStudents) {
+          let signature = await Signature.find({
+            student: _ID,
+          });
+
+          if (Boolean(signature[0] || "")) {
+            newStudentSignature.push({
+              student: _ID,
+              signature: signature._id,
+            });
+          } else {
+            let createdSignature = await Signature.create({
+              student: _ID,
+              signature: "",
+            });
+            newStudentSignature.push({
+              student: _ID,
+              signature: createdSignature._id,
+            });
+          }
+
+          let present = instance.present.filter(
+            (item, index) => String(item.student) === String(_ID)
+          );
+
+          newPresent.push({
+            student: _ID,
+            presentStatus: present[0]?.presentStatus || false,
+          });
+
+          let supervisorComments = instance.supervisorComments.filter(
+            (item, index) => String(item.student) === String(_ID)
+          );
+
+          if (Boolean(supervisorComments[0] || "")) {
+            newSupervisorComments.push({
+              student: _ID,
+              comment: supervisorComments[0]?.comment,
+            });
+          } else {
+            let newSupComment = await Comment.create({
+              group: groupID,
+              report: instance._id,
+              student: _ID,
+              supervisor: userID,
+              comment: "",
+            });
+            newSupervisorComments.push({
+              student: _ID,
+              comment: newSupComment._id,
+            });
+          }
+
+          let remarks = instance.remarks.filter(
+            (item, index) => String(item.student) === String(_ID)
+          );
+          if (Boolean(remarks[0] || "")) {
+            newRemarks.push({
+              student: _ID,
+              remarks: remarks[0]?.remarks,
+            });
+          } else {
+            let createNewRemarks = await Remarks.create({
+              group: groupID,
+              report: instance._id,
+              student: _ID,
+              supervisor: userID,
+              remarks: "",
+            });
+            newRemarks.push({
+              student: _ID,
+              remarks: createNewRemarks._id,
+            });
+          }
+        }
+
+        instance.students = newStudents;
+        instance.studentSignature = newStudentSignature;
+        instance.titles = modifiedTitles;
+        instance.present = newPresent;
+        instance.supervisorComments = newSupervisorComments;
+        instance.remarks = newRemarks;
+
+        await instance.save();
+      }
+    }
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const deleteGroup = async (req, res, next) => {
+  try {
+    const { groupID } = req.body;
 
-    try {
-        const { groupID } = req.body;
+    const { userID } = req.userID;
 
-        const { userID } = req.userID
+    const group = await Group.findOne({ _id: groupID }).populate({
+      path: "title",
+      select: "name",
+    });
 
-        console.log("req.body ==> ", req.body)
+    await Report.deleteMany({ group: groupID });
 
-        const group = await Group.findOne({ _id: groupID }).populate({
-            path: "group",
-            select: "title"
-        })
+    await Title.findByIdAndDelete(group.title._id);
 
-        await Report.deleteMany({ group: groupID });
+    await Comment.deleteMany({ group: groupID });
 
-        await Title.deleteMany({ _id: group.group._id })
+    await Remarks.deleteMany({ group: groupID });
 
-        await Comment.deleteMany({ group: groupID })
+    const updatedSupervisor = await Supervisor.findOneAndUpdate(
+      { _id: userID },
+      {
+        $pull: {
+          groups: groupID,
+        },
+      },
+      { new: true } // return the updated document
+    );
 
-        await Remarks.deleteMany({ group: groupID })
+    await Group.findByIdAndDelete(groupID);
 
-        const updatedSupervisor = await Supervisor.findOneAndUpdate(
-            { _id: userID },
-            {
-                $pull: {
-                    groups: groupID,
-                },
-            },
-            { new: true } // return the updated document
-        );
-
-        await Group.findByIdAndDelete(groupID);
-
-        await Student.updateMany(
-            {
-                $or: [
-                    { "associate.groupName": groupID },
-                    { "associate.title": groupID }
-                ]
-            },
-            {
-                $pull: {
-                    associate: {
-                        $or: [
-                            { groupName: groupID },
-                            { title: groupID }
-                        ]
-                    }
-                }
-            }
-        );
-
-        const groups = await Group.find({ supervisor: userID })
-
-        return res.status(200).json({
-            success: true,
-            responseData: groups,
-            message: `${group.group.title || "Group"} deleted`
-        })
-    } catch (error) {
-        next(error)
+    for (let { student } of group.groupMembers) {
+      await Student.findByIdAndUpdate(student, {
+        $pull: {
+          associateGroups: group._id,
+        },
+      });
     }
-}
+
+    const groups = await Group.find({ supervisor: userID }).populate([
+      {
+        path: "title",
+        select: "name",
+      },
+      {
+        path: "supervisor",
+        select: "name",
+      },
+      {
+        path: "titles.student",
+        select: "name studentID",
+      },
+      {
+        path: "titles.title",
+        select: "name",
+      },
+      {
+        path: "groupMembers.student",
+        select: "studentID name semister department",
+      },
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      responseData: groups,
+      message: `${group.group.title || "Group"} deleted`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 async function findReport(userID, groupID) {
-    let obj = await Report.find({ supervisor: userID, group: groupID }).populate([
-        {
-            path: "group",
-            select: "group",
-            populate: {
-                path: "group",
-                select: "title groupTypes"
-            }
-        },
-        {
-            path: "supervisor",
-            select: "name"
-        },
-        {
-            path: "studentID",
-            select: "studentID"
-        },
-        {
-            path: "studentSignature.studentID",
-            select: "studentID name"
-        },
-        {
-            path: "studentSignature.signature",
-            select: "ID signature",
-        },
-        {
-            path: "title.studentID",
-            select: "studentID name"
-        },
-        {
-            path: "title.title",
-            select: "title courseType",
-        },
-        {
-            path: "present.studentID",
-            select: "studentID name"
-        },
-        {
-            path: "supervisorComments.studentID",
-            select: "studentID name"
-        },
-        {
-            path: "supervisorComments.comment",
-            select: "comment",
-        },
-        {
-            path: "remarks.studentID",
-            select: "studentID name"
-        },
-        {
-            path: "remarks.remarks",
-            select: "remarks",
-        },
-    ])
-    return obj
+  let obj = await Report.find({ supervisor: userID, group: groupID }).populate([
+    {
+      path: "group",
+      select: "title",
+      populate: {
+        path: "title",
+        select: "name groupTypes",
+      },
+    },
+    {
+      path: "supervisor",
+      select: "name",
+    },
+    {
+      path: "students",
+      select: "studentID",
+    },
+    {
+      path: "studentSignature.student",
+      select: "studentID name",
+    },
+    {
+      path: "studentSignature.signature",
+      select: "student signature",
+    },
+    {
+      path: "titles.student",
+      select: "studentID name",
+    },
+    {
+      path: "titles.title",
+      select: "name courseType",
+    },
+    {
+      path: "present.student",
+      select: "studentID name",
+    },
+    {
+      path: "supervisorComments.student",
+      select: "studentID name",
+    },
+    {
+      path: "supervisorComments.comment",
+      select: "comment",
+    },
+    {
+      path: "remarks.student",
+      select: "studentID name",
+    },
+    {
+      path: "remarks.remarks",
+      select: "remarks",
+    },
+  ]);
+  return obj;
 }
 
 export const groupReport = async (req, res, next) => {
+  try {
+    const { groupID } = req.body;
 
-    try {
+    const { userID } = req.userID;
 
-        const { groupID } = req.body
-
-        const { userID } = req.userID;
-
-        if (!groupID) {
-            throw new CustomError("Invalid Group", 404, Internal)
-        }
-
-        if (!userID) {
-            throw new CustomError("Please Login ", 401, Internal)
-        }
-
-        const group = await Group.findOne({ _id: groupID }).populate([
-            {
-                path: "title.student",
-                select: "studentID name"
-            }, {
-                path: "title.title",
-                select: "title groupTypes connectedGroup",
-            }, {
-                path: "group",
-                select: "title",
-            }
-        ])
-
-        const report = await findReport(userID, groupID) //////////////////////////////////////////////////////
-
-        let responseData2 = [];
-
-        for (let { student, title, } of group.title) {
-
-            responseData2.push(
-                {
-                    "student_ObjID": student._id,
-                    "title_ObjID": title._id,
-                    "studentID": student.studentID,
-                    "studentName": student.name,
-                    "courseType": group.groupTypes, //
-                    "title": title.title,
-                    "main_group_ObjectID": group._id,
-                }
-            )
-        }
-
-
-        if (!report) {
-            throw new CustomError("No group exist", 404, Internal)
-        }
-
-        return res.status(200).json({
-            success: true,
-            message: "",
-            responseData1: report || [],
-            responseData2: responseData2 || [],
-        })
-
-    } catch (error) {
-        next(error)
+    if (!groupID) {
+      throw new CustomError("Invalid Group", 404, Internal);
     }
-}
+
+    if (!userID) {
+      throw new CustomError("Please Login ", 401, Internal);
+    }
+
+    const group = await Group.findOne({ _id: groupID }).populate([
+      {
+        path: "titles.student",
+        select: "studentID name",
+      },
+      {
+        path: "titles.title",
+        select: "name groupTypes connectedGroup",
+      },
+      {
+        path: "title",
+        select: "name",
+      },
+    ]);
+
+    const report = await findReport(userID, groupID);
+
+    let responseData2 = [];
+
+    for (let { student, title } of group.titles) {
+      responseData2.push({
+        student_ObjID: student._id,
+        title_ObjID: title._id,
+        studentID: student.studentID,
+        studentName: student.name,
+        courseType: group.groupTypes, //
+        title: title.name,
+        main_group_ObjectID: group._id,
+      });
+    }
+
+    if (!report) {
+      throw new CustomError("No group exist", 404, Internal);
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "",
+      responseData1: report || [],
+      responseData2: responseData2 || [],
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 function weekFinder(length) {
-    let week = length
+  let week = length;
 
-    if (length === 0) {
-        week += 1;
-    }
-    return week
+  if (length === 0) {
+    week += 1;
+  }
+  return week;
 }
 
 export const createReport = async (req, res, next) => {
-    try {
-        const { groupID } = req.body;
+  try {
+    const { groupID } = req.body;
 
-        const { userID } = req.userID;
+    const { userID } = req.userID;
 
-        const group = await Group.findOne({ _id: groupID }).populate([
-            {
-                path: "title.student",
-            },
-            {
-                path: "title.title"
-            }
-        ])
+    const group = await Group.findOne({ _id: groupID }).populate([
+      {
+        path: "titles.student",
+      },
+      {
+        path: "titles.title",
+      },
+    ]);
 
-        let report = await Report.find({ group: groupID }).lean();
+    let report = await Report.find({ group: groupID }).lean();
 
-        let studentIDArray = [];
-        let studentSignatureArray = []
-        let titleArray = []
-        let presentArray = []
-        let supervisorCommentsArray = []
-        let remarksArray = []
+    let studentIDArray = [];
+    let studentSignatureArray = [];
+    let titleArray = [];
+    let presentArray = [];
+    let supervisorCommentsArray = [];
+    let remarksArray = [];
 
-        for (let { student, title } of group.title) {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-            const comment = await Comment.create({
-                group: group._id,
-                studentID: student._id,
-                supervisor: userID,
-                comment: ""
-            })
+    for (let { student, title } of group.titles) {
+      const comment = await Comment.create({
+        group: group._id,
+        student: student._id,
+        supervisor: userID,
+        comment: "", //report should be create last
+      });
 
-            let remarks = await Remarks.create({
-                group: groupID,
-                studentID: student._id,
-                supervisor: userID,
-                remarks: ""
-            })
+      let remarks = await Remarks.create({
+        group: groupID,
+        student: student._id,
+        supervisor: userID,
+        remarks: "", //report should be create last
+      });
 
-            const findSignature = await Signature.findOne({
-                ID: student._id,
-            })
+      const findSignature = await Signature.findOne({
+        student: student._id,
+      });
 
-            if (!findSignature) {
-                const signature = await Signature.create({
-                    ID: student._id,
-                    signature: "",
-                })
+      studentSignatureArray.push({
+        student: student._id,
+        signature: findSignature._id,
+      });
 
-                studentSignatureArray.push({
-                    studentID: student._id,
-                    signature: signature._id
-                })
+      studentIDArray.push(student._id);
 
-            } else {
-                studentSignatureArray.push({
-                    studentID: student._id,
-                    signature: findSignature._id
-                })
-            }
+      titleArray.push({
+        student: student._id,
+        title: title._id,
+      });
 
-            studentIDArray.push(student._id)
+      presentArray.push({
+        student: student._id,
+        presentStatus: true,
+      });
 
-            titleArray.push({
-                studentID: student._id,
-                title: title._id
-            })
+      supervisorCommentsArray.push({
+        student: student._id,
+        comment: comment._id,
+      });
 
-            presentArray.push({
-                studentID: student._id,
-                presentStatus: true,
-            })
-
-            supervisorCommentsArray.push({
-                studentID: student._id,
-                comment: comment._id
-            })
-
-            remarksArray.push({
-                studentID: student._id,
-                remarks: remarks._id
-            })
-
-        }
-
-        const createdReport = await Report.create({
-            group: groupID,
-            supervisor: userID,
-            week: weekFinder(report.length),
-            date: (new Date()).toLocaleDateString('en-GB'),
-
-            studentID: studentIDArray,
-            studentSignature: studentSignatureArray,
-            title: titleArray,
-            present: presentArray,
-            supervisorComments: supervisorCommentsArray,
-            remarks: remarksArray,
-        })
-
-        const allReport = await findReport(userID, groupID)
-
-        res.status(201).json({
-            success: true,
-            message: "Report created successfully",
-            responseData: allReport
-        })
-
-        for (let { comment } of supervisorCommentsArray) {
-            let Supcomment = await Comment.findById(comment)
-            Supcomment.reportID = createdReport._id
-            await Supcomment.save()
-        }
-        for (let { remarks } of remarksArray) {
-            let studentRemarks = await Remarks.findById(remarks)
-            studentRemarks.reportID = createdReport._id;
-            await studentRemarks.save()
-        }
-
-        for (let { signature } of studentSignatureArray) {
-            let studentSignature = await Signature.findById(signature)
-            studentSignature.reportID = createdReport._id;
-            await studentSignature.save()
-        }
-
-    } catch (error) {
-
-        next(error)
-
+      remarksArray.push({
+        student: student._id,
+        remarks: remarks._id,
+      });
     }
-}
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    const createdReport = await Report.create({
+      group: groupID,
+      supervisor: userID,
+      week: weekFinder(report.length),
+      date: new Date().toLocaleDateString("en-GB"),
+
+      students: studentIDArray,
+      studentSignature: studentSignatureArray,
+      titles: titleArray,
+      present: presentArray,
+      supervisorComments: supervisorCommentsArray,
+      remarks: remarksArray,
+    });
+
+    const allReport = await findReport(userID, groupID);
+
+    res.status(201).json({
+      success: true,
+      message: "Report created successfully",
+      responseData: allReport,
+    });
+
+    // update comment and remarks
+
+    for (let { comment } of supervisorCommentsArray) {
+      let Supcomment = await Comment.findById(comment);
+      Supcomment.report = createdReport._id;
+      await Supcomment.save();
+    }
+
+    for (let { remarks } of remarksArray) {
+      let studentRemarks = await Remarks.findById(remarks);
+      studentRemarks.report = createdReport._id;
+      await studentRemarks.save();
+    }
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const deleteReport = async (req, res, next) => {
+  try {
+    const { reportID } = req.body;
 
-    try {
-        const { reportID } = req.body;
+    const { userID } = req.userID;
 
-        const { userID } = req.userID
+    res.status(200).json({
+      success: true,
+      reportID: reportID,
+      message: "Deleted successfully",
+    });
 
-        res.status(200).json({
-            success: true,
-            reportID: reportID,
-            message: "Deleted successfully"
-        })
-
-        await Report.findByIdAndDelete({ _id: reportID })
-
-        await Report.find({ supervisor: userID })
-
-        await Comment.deleteMany({ reportID })
-        await Signature.deleteMany({ reportID })
-        await Remarks.deleteMany({ reportID })
-
-
-    } catch (error) {
-        next(error)
-    }
-}
+    await Report.findByIdAndDelete({ _id: reportID });
+    await Comment.deleteMany({ report: reportID });
+    await Remarks.deleteMany({ report: reportID });
+  } catch (error) {
+    next(error);
+  }
+};
 
 // edit Details route
 
 export const updateReport = async (req, res, next) => {
+  try {
+    let { groupID, reportID, studentID, fieldName, inputValue } = req.body;
 
-    try {
-        let { groupID, reportID, studentID, fieldName, inputValue } = req.body;
+    const { userID } = req.userID;
 
-        const { userID } = req.userID;
+    if (!reportID || !fieldName) {
+      return res.status(400).json({ error: "Missing reportID or fieldName" });
+    }
 
-        if (!reportID || !fieldName) {
-            return res.status(400).json({ error: "Missing reportID or fieldName" });
-        }
+    let report = await Report.findById(reportID);
 
-        let report = await Report.findById(reportID)
+    if (fieldName === "week") {
+      report.week = inputValue;
+      await report.save();
+    }
 
-        if (fieldName === "week") {
-            report.week = inputValue;
-            await report.save();
-        }
+    if (fieldName === "date") {
+      const isValidDateFormat = /^\d{2}\/\d{2}\/\d{4}$/.test(inputValue);
+      if (!isValidDateFormat) {
+        return res
+          .status(400)
+          .json({ error: "Date must be in format DD/MM/YYYY (en-GB)" });
+      }
 
-        if (fieldName === "date") {
+      report.date = inputValue;
+      await report.save();
+    }
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-            const isValidDateFormat = /^\d{2}\/\d{2}\/\d{4}$/.test(inputValue);
-            if (!isValidDateFormat) {
-                return res.status(400).json({ error: "Date must be in format DD/MM/YYYY (en-GB)" });
-            }
+    if (fieldName === "present") {
+      let report = await Report.findById(reportID);
 
-            report.date = inputValue;
-            await report.save();
-        }
+      let newPresentArray = report.present.map((obj, index) => {
+        return String(obj.student) === String(studentID._id)
+          ? { ...obj, presentStatus: Boolean(inputValue) }
+          : obj;
+      });
+      report.present = newPresentArray;
+      await report.save();
+    }
 
-        if (fieldName === "present") {
+    if (fieldName === "supervisorComments") {
+      let comment = await Comment.findOne({
+        report: reportID,
+        student: studentID._id,
+      });
 
-            let report = await Report.findById(reportID);
+      comment.comment = inputValue;
 
-            let newPresentArray = report.present.map((obj, index) => {
-                return (String(obj.studentID) === String(studentID._id) ? { ...obj, presentStatus: Boolean(inputValue) } : obj);
-            })
-            report.present = newPresentArray;
-            await report.save()
-        }
+      await comment.save();
+    }
 
-        if (fieldName === "supervisorComments") {
+    if (fieldName === "remarks") {
+      let remarks = await Remarks.findOne({
+        report: reportID,
+        student: studentID._id,
+      });
 
-            let comment = await Comment.findOne({ reportID: reportID, studentID: studentID._id })
+      remarks.remarks = inputValue;
 
-            comment.comment = inputValue;
+      await remarks.save();
+    }
 
-            await comment.save();
+    const newReportDoc = await Report.findById(reportID).populate([
+      {
+        path: "group",
+        select: "title",
+        populate: {
+          path: "title",
+          select: "name groupTypes",
+        },
+      },
+      {
+        path: "supervisor",
+        select: "name",
+      },
+      {
+        path: "students",
+        select: "studentID",
+      },
+      {
+        path: "studentSignature.student",
+        select: "studentID name",
+      },
+      {
+        path: "studentSignature.signature",
+        select: "student signature",
+      },
+      {
+        path: "titles.student",
+        select: "studentID name",
+      },
+      {
+        path: "titles.title",
+        select: "name courseType",
+      },
+      {
+        path: "present.student",
+        select: "studentID name",
+      },
+      {
+        path: "supervisorComments.student",
+        select: "studentID name",
+      },
+      {
+        path: "supervisorComments.comment",
+        select: "comment",
+      },
+      {
+        path: "remarks.student",
+        select: "studentID name",
+      },
+      {
+        path: "remarks.remarks",
+        select: "remarks",
+      },
+    ]);
 
-        }
+    return res.status(400).json({
+      success: true,
+      responseData: newReportDoc,
+      message: "Document update successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
-        if (fieldName === "remarks") {
+export const updateTitle = async (req, res, next) => {
+  try {
+    const {
+      title_ObjID,
+      student_ObjID,
+      main_group_ObjectID,
+      inputValue,
+      nameArray,
+    } = req.body;
 
-            let remarks = await Remarks.findOne({ reportID: reportID, studentID: studentID._id })
+    const { userID } = req.userID;
 
-            remarks.remarks = inputValue;
+    const title = await Title.findById(title_ObjID);
 
-            await remarks.save();
-        }
+    let group = await Group.findById(main_group_ObjectID);
+    let reports = await Group.find({
+      group: group._id,
+      supervisor: userID,
+    });
 
-        const newReportDoc = await Report.findById(reportID).populate([
-            {
-                path: "group",
-                select: "group",
-                populate: {
-                    path: "group",
-                    select: "title groupTypes"
-                }
-            },
-            {
-                path: "supervisor",
-                select: "name"
-            },
-            {
-                path: "studentID",
-                select: "studentID"
-            },
-            {
-                path: "studentSignature.studentID",
-                select: "studentID name"
-            },
-            {
-                path: "studentSignature.signature",
-                select: "ID signature",
-            },
-            {
-                path: "title.studentID",
-                select: "studentID name"
-            },
-            {
-                path: "title.title",
-                select: "title courseType",
-            },
-            {
-                path: "present.studentID",
-                select: "studentID name"
-            },
-            {
-                path: "supervisorComments.studentID",
-                select: "studentID name"
-            },
-            {
-                path: "supervisorComments.comment",
-                select: "comment",
-            },
-            {
-                path: "remarks.studentID",
-                select: "studentID name"
-            },
-            {
-                path: "remarks.remarks",
-                select: "remarks",
-            },
-        ])
+    let groupTitle = await Title.findById(group.title);
 
-        return res.status(400).json({
-            success: true,
-            responseData: newReportDoc,
-            message: "Document update successfully"
+    if (!title) {
+      throw new CustomError("title not exist", 401, Internal);
+    }
+
+    const findTitle = await Title.findOne({
+      name: inputValue,
+      connectedGroup: group._id,
+    });
+
+    let currentTitleID = findTitle?._id || "";
+
+    if (!findTitle) {
+      let createTitle = await Title.create({
+        name: inputValue,
+        connectedGroup: group._id,
+        groupTypes: group.groupTypes,
+        supervisor: userID,
+        students: [student_ObjID],
+      });
+
+      currentTitleID = createTitle._id;
+    }
+
+    res.status(201).json({
+      success: true,
+      message: "Name updated successfully",
+    });
+
+    // Avoid deleting the groupTitle.name
+    await Title.deleteMany({
+      connectedGroup: main_group_ObjectID,
+      name: { $nin: [...nameArray, groupTitle.name] }, // Add groupTitle.name to the exclusion list
+    });
+
+    let newGroupTitles = [];
+
+    for (let { student, title } of group.titles) {
+      if (String(student) === String(student_ObjID)) {
+        newGroupTitles.push({
+          student: student,
+          title: currentTitleID,
         });
-
-    } catch (error) {
-        next(error)
+        continue;
+      }
+      newGroupTitles.push({
+        student: student,
+        title: title,
+      });
     }
-}
 
-export const updateDetails = async (req, res, next) => {
-    try {
+    group.titles = newGroupTitles;
+    await group.save();
 
-        const { title_ObjID, student_ObjID, main_group_ObjectID, fieldName, inputValue } = req.body;
-
-        // console.log("body ==> ", req.body)
-
-        // id is either Title_ObjectID or student_ObjectID
-
-        const { userID } = req.userID;
-
-        const student = await Student.findOne({_id: student_ObjID})
-
-        // console.log("student => ", student)
-
-        if (fieldName === "studentName") {
-
-            if (!student) {
-                throw new CustomError("Student not exist", 401, Internal)
-            }
-
-            res.status(201).json({
-                success: true,
-                message: "Name update successfully"
-            })
-
-            student.name = inputValue;
-            await student.save();
-        }
-
-        if (fieldName === "title") {
-
-            let group = await Group.findById(main_group_ObjectID);
-
-            const title = await Title.findById(title_ObjID)
-
-            if (!title) {
-                throw new CustomError("title not exist", 401, Internal)
-            }
-
-            const foundTitle = await Title.findOne({
-                title: inputValue,
-                supervisor: userID,
-                studentID: { $in: [student_ObjID] },
-            })
-
-            if (!foundTitle) {
-
-                const createTitle = await Title.create({
-                    title: inputValue,
-                    connectedGroup: main_group_ObjectID,
-                    groupTypes: group.groupTypes,
-                    studentID: [student_ObjID],
-                    supervisor: userID,
-                })
-
-
-                for (let i = 0; i < group.title.length; i++) {
-                    if (String(group.title[i].student) === String(student_ObjID)) {
-                        group.title[i].title = createTitle._id;
-                    }
-                }
-                await group.save();
-
-                for (let i = 0; i < student.associate.length; i++) {
-                    if (String(student.associate[i].groupName) === String(main_group_ObjectID)) {
-                        student.associate[i].title = createTitle._id;
-                    }
-                }
-                await student.save();
-
-            }
-            else{
-                for (let i = 0; i < group.title.length; i++) {
-                    if (String(group.title[i].student) === String(student_ObjID)) {
-                        group.title[i].title = foundTitle._id;
-                    }
-                }
-                await group.save();
-
-                for (let i = 0; i < student.associate.length; i++) {
-                    if (String(student.associate[i].groupName) === String(group.connectedGroup)) {
-                        student.associate[i].title = foundTitle._id;
-                    }
-                }
-                await student.save();
-            }
-
-            res.status(201).json({
-                success: true,
-                message: "Name update successfully"
-            })
-
-        }
-
-
-    } catch (error) {
-        next(error)
+    for (let instance of reports) {
+      instance.titles = newGroupTitles;
+      await instance.save();
     }
-}
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const checkUser = async (req, res, next) => {
+  const { studentID } = req.body;
+
+  let checkStudent = await Student.findOne({
+    studentID: studentID,
+  });
+
+  if (Boolean(checkStudent?.studentID || "")) {
+    let obj = {
+      studentID: checkStudent.studentID,
+      name: checkStudent.name,
+      semister: checkStudent.semister,
+      department: checkStudent.department,
+    };
+
+    return res.status(200).json({
+      success: true,
+      responseData: obj,
+    });
+  }
+  return res.status(404).json({
+    success: false,
+  });
+};

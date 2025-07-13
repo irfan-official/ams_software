@@ -7,28 +7,36 @@ const groupSchema = mongoose.Schema(
       ref: "Supervisor",
       required: true,
     },
-    group: {
+    title: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Title",
       required: true,
     },
-    groupMembers: [  
+    groupMembers: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Student",
+        student: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Student",
+        },
+        designation: {
+          type: String,
+          enum: ["Design Secretary", "Project Leader", "Developer"],
+        },
       },
     ],
-    title: [{
-      student: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Student"
+    titles: [
+      {
+        student: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Student",
+        },
+        title: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Title",
+        },
       },
-      title: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Title"
-      }
-    }],
-    groupTypes: {     
+    ],
+    groupTypes: {
       type: String,
       enum: ["Thesis", "IDP"],
       required: true,
@@ -40,7 +48,7 @@ const groupSchema = mongoose.Schema(
       trim: true,
     },
   },
-  { timestamps: true } 
+  { timestamps: true }
 );
 
 const Group = mongoose.model("Group", groupSchema);

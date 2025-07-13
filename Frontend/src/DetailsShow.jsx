@@ -1,9 +1,28 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "./context/Context.jsx";
 import { FaRegCheckCircle } from "react-icons/fa";
 
 function DetailsShow({ CSS, updateDetailsData, show }) {
-  let { details, setDetails, crrentGroupTypes } = useContext(UserContext);
+  let { details, setDetails, currentGroupTypes } = useContext(UserContext);
+
+  let [change, setChange] = useState([]);
+
+  function CHANGE() {
+    let arr = [];
+    details.forEach((data, index) => {
+      arr.push({
+        index: index,
+        changeStatus: false,
+      });
+    });
+    return arr;
+  }
+
+  useEffect(() => {
+    if (change.length < 1) {
+      setChange(CHANGE());
+    }
+  }, [details]);
 
   return (
     <div
@@ -26,7 +45,7 @@ function DetailsShow({ CSS, updateDetailsData, show }) {
             <th className={`${CSS().optionalDisplay} p-2`}>Student Name</th>
             <th className={`${CSS().optionalDisplay} p-2`}>
               {" "}
-              {crrentGroupTypes || ""} Title
+              {currentGroupTypes || ""} Title
             </th>
           </tr>
         </thead>
@@ -53,39 +72,12 @@ function DetailsShow({ CSS, updateDetailsData, show }) {
                   {studentID}
                 </td>
 
-                <td className={` ${CSS().optionalDisplay} h-10 `}>
-                  <div className="w-full h-full flex items-center justify-between">
-                    <input
-                      className="border-none w-[90%] h-full focus:outline-0 focus:bg-slate-700 pl-2"
-                      onChange={(e) => {
-                        setDetails((prev) =>
-                          prev.map((data, dataIndex) =>
-                            index === dataIndex
-                              ? { ...data, studentName: e.target.value }
-                              : data
-                          )
-                        );
-                      }}
-                      value={studentName}
-                      type="text"
-                    />
-                    <span className="w-[10%] h-full flex justify-center items-center">
-                      <span
-                        onClick={() =>
-                          updateDetailsData(
-                            title_ObjID,
-                            student_ObjID,
-                            "studentName",
-                            studentName,
-                            main_group_ObjectID
-                          )
-                        }
-                        className="scale-150 text-slate-400 hover:text-lime-400 cursor-pointer"
-                      >
-                        <FaRegCheckCircle />
-                      </span>
-                    </span>
-                  </div>
+                <td
+                  className={` ${
+                    CSS().optionalDisplay
+                  } h-10 p-2 cursor-default`}
+                >
+                  {studentName}
                 </td>
 
                 <td className={` ${CSS().optionalDisplay} h-10`}>
@@ -93,6 +85,13 @@ function DetailsShow({ CSS, updateDetailsData, show }) {
                     <input
                       className="border-none w-[90%] h-full focus:outline-0 focus:bg-slate-700 pl-2"
                       onChange={(e) => {
+                        setChange((prev) => {
+                          return prev.map((item, mapIdx) => {
+                            return mapIdx === index
+                              ? { ...item, changeStatus: true }
+                              : item;
+                          });
+                        });
                         setDetails((prev) =>
                           prev.map((data, dataIndex) =>
                             index === dataIndex
@@ -107,18 +106,28 @@ function DetailsShow({ CSS, updateDetailsData, show }) {
 
                     <span className="w-[10%] h-full flex justify-center items-center">
                       <span
-                        onClick={() =>
+                        onClick={() => {
+                          setChange((prev) => {
+                            return prev.map((item, mapIdx) => {
+                              return mapIdx === index
+                                ? { ...item, changeStatus: false }
+                                : item;
+                            });
+                          });
+
                           updateDetailsData(
                             title_ObjID,
                             student_ObjID,
                             "title",
                             title,
                             main_group_ObjectID
-                          )
-                        }
+                          );
+                        }}
                         className="scale-150 text-slate-400 hover:text-lime-400 cursor-pointer"
                       >
-                        <FaRegCheckCircle />
+                        {change[index]?.changeStatus ? (
+                          <FaRegCheckCircle />
+                        ) : null}
                       </span>
                     </span>
                   </div>

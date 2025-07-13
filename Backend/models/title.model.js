@@ -1,30 +1,36 @@
 import mongoose, { connect } from "mongoose";
 
-const titleSchema = mongoose.Schema({
-    title: {
-        type: "String",
-        required: true,
-        trim: true,
+const titleSchema = mongoose.Schema(
+  {
+    name: {
+      type: "String",
+      required: true,
+      trim: true,
     },
-    connectedGroup:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Group"
+    connectedGroup: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Group",
     },
     groupTypes: {
-        type: "String",
-        required: true,
-        trim: true,
+      type: "String",
+      eum: ["Thesis", "IDP"],
+      required: true,
+      trim: true,
     },
-    studentID: [{
+    students: [
+      {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Student",
-    }],
+      },
+    ],
     supervisor: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Supervisor",
-        required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Supervisor",
+      required: true,
     },
-}, { timestamps: true })
+  },
+  { timestamps: true }
+);
 
-const Title = mongoose.model("Title", titleSchema)
-export default Title
+const Title = mongoose.model("Title", titleSchema);
+export default Title;

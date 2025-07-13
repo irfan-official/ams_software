@@ -26,6 +26,14 @@ function Overview() {
   let { reportData, setReportData } = useContext(UserContext)
   let { details, setDetails, setCurrentGroupID } = useContext(UserContext)
 
+  function NameArray(){
+    let arr = [];
+    details.forEach(({title},index) => {
+      arr.push(title)
+    })
+    return arr;          
+  }
+
 
   useEffect(() => {
 
@@ -76,17 +84,17 @@ function Overview() {
   useEffect(() => {
     details.map(({ studentID, studentName, title }, index) => {
       presentArray.current.push({
-        studentID: studentID,
+        student: studentID,
         presentStatus: true,
       });
 
       supervisorCommentsArray.current.push({
-        studentID: studentID,
+        student: studentID,
         comment: "",
       });
 
       remarksArray.current.push({
-        studentID: studentID,
+        student: studentID,
         remarks: "",
       });
     });
@@ -99,23 +107,15 @@ function Overview() {
       return alert("field name or title name required")
     }
 
-    alert("sendind data")
-    console.log("data => ", {
-      title_ObjID,
-      student_ObjID,
-      fieldName,
-      inputValue,
-      main_group_ObjectID
-    })
-
     try {
       let response = await axios.patch("/group/api/v1/update-details",
         {
           title_ObjID,
           student_ObjID,
-          fieldName,
           inputValue,
-          main_group_ObjectID
+          fieldName,
+          main_group_ObjectID,
+          nameArray : NameArray()
         },
         {
           withCredentials: true
@@ -165,24 +165,6 @@ function Overview() {
   }
 
 
-  async function getGroupReportForPrint(groupID = "") {
-    try {
-      if (!groupID) return;
-
-      const response = await axios.post("/url", {
-        groupID: groupID.current
-      }, { withCredentials: true });
-
-      if (!response.data.redirect) {
-        alert(response.data.message);
-      }
-
-    } catch (error) {
-      console.log("getGroupReport error:", error);
-      alert("Something went wrong", error.message);
-    }
-  }
-
   async function createReport() {
 
     try {
@@ -220,7 +202,7 @@ function Overview() {
 
       ButtonCss: "w-full h-10 flex items-center justify-center mt-2 mb-7 border border-gray-300 rounded-md hover:bg-slate-200 shadow-[0_2px_6px_rgba(0,0,0,0.5)] cursor-pointer",
 
-      optionalDisplay: "border border-dotted border-gray-400"
+      optionalDisplay: "border border-dotted border-gray-400 cursor-pointer"
     }
   }
 
@@ -231,7 +213,7 @@ function Overview() {
   function useDebouncedUpdate(delay = 300) {
     const debounceTimerRef = useRef(null);
 
-    const update = (reportID, studentID, fieldName, inputValue) => {
+    const update = (reportID, student, fieldName, inputValue) => { ////////////////////////////////////// main culprit is this
       // Clear any previous timer
       clearTimeout(debounceTimerRef.current);
 
@@ -240,7 +222,7 @@ function Overview() {
         try {
           const req = await axios.patch(
             "/group/api/v1/update-report",
-            { groupID, reportID, studentID, fieldName, inputValue },
+            { groupID, reportID, studentID: student, fieldName, inputValue },
             { withCredentials: true }
           );
 
@@ -250,8 +232,6 @@ function Overview() {
             })
             )
           }
-
-          console.log("Updated:", studentID, fieldName, inputValue);
         } catch (err) {
           console.error("Update failed:", err);
         }
@@ -314,9 +294,9 @@ function Overview() {
                       supervisor,
                       week,
                       date,
-                      studentID,
+                      students,
                       studentSignature,
-                      title,
+                      titles,
                       present,
                       supervisorComments,
                       remarks,
@@ -353,10 +333,10 @@ function Overview() {
                         }} className={CSS().inputBox} type="text" value={date} />
                       </td>
                       <td className={CSS().tdCSS}>  {/*_____________________present____________________________________*/}
-                        {present.map(({ studentID, presentStatus }, index) => (
+                        {present.map(({ student, presentStatus }, index) => (
                           <h3 key={index} className={`${CSS(index, present.length).h3} p-2 `}>
                             <p className={CSS().p}>
-                              {studentID.studentID}
+                              {student.studentID}
                             </p>
                             <input
                               className="w-5 cursor-pointer"
@@ -365,8 +345,8 @@ function Overview() {
                               onChange={(e) => {
 
                                 let reportID = _id;
-
-                                update(reportID, studentID, "present", e.target.checked);
+     
+                                update(reportID, student, "present", e.target.checked);
 
                                 const checked = e.target.checked;
 
@@ -391,13 +371,14 @@ function Overview() {
                       </td>
                       <td className={CSS().tdCSS}>  {/*_____________________supervisorComments____________________________________*/}
 
-                        {supervisorComments.map(({ studentID, comment }, index) => (
+                        {supervisorComments.map(({ student, comment }, index) => (
 
                           <h3 key={index} className={CSS(index, supervisorComments.length).h3}>
                             <input type="text"
                               onChange={(e) => {
                                 let reportID = _id;
-                                update(reportID, studentID, "supervisorComments", e.target.value);
+                            
+                                update(reportID, student, "supervisorComments", e.target.value);
                                 const inputvalue = e.target.value;
                                 setReportData((prev) =>
                                   prev.map((item, itemIndex) => {
@@ -420,13 +401,14 @@ function Overview() {
                         ))}
                       </td>
                       <td className={CSS().tdCSS}>  {/*_____________________remarks____________________________________*/}
-                        {remarks.map(({ studentID, remarks }, index) => (
+                        {remarks.map(({ student, remarks }, index) => (
 
                           <h3 key={index} className={CSS(index, remarks.length).h3}>
                             <input type="text"
                               onChange={(e) => {
                                 let reportID = _id;
-                                update(reportID, studentID, "remarks", e.target.value);
+                   
+                                update(reportID, student, "remarks", e.target.value);
                                 const inputvalue = e.target.value;
                                 setReportData((prev) =>
                                   prev.map((item, weekIndex) => {

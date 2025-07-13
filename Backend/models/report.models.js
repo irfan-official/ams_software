@@ -27,7 +27,7 @@ const reportModel = new mongoose.Schema(
       trim: true,
     },
 
-    studentID: [{
+    students: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: "Student", //reffer to the Student studentID
       required: true,
@@ -35,7 +35,7 @@ const reportModel = new mongoose.Schema(
 
     studentSignature: [
       {
-        studentID: {
+        student: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Student",
         },
@@ -47,9 +47,9 @@ const reportModel = new mongoose.Schema(
       },
     ],
 
-    title: [
+    titles: [
       {
-        studentID: {
+        student: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Student",
           required: true,
@@ -65,7 +65,7 @@ const reportModel = new mongoose.Schema(
 
     present: [
       {
-        studentID: {
+        student: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Student",
           required: true,
@@ -79,7 +79,7 @@ const reportModel = new mongoose.Schema(
 
     supervisorComments: [
       {
-        studentID: {
+        student: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Student",
           required: true,
@@ -93,7 +93,7 @@ const reportModel = new mongoose.Schema(
     ],
     remarks: [
       {
-        studentID: {
+        student: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Student",
           required: true,

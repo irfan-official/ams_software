@@ -14,12 +14,15 @@
     "@tailwindcss/cli": "^4.1.7",
     "@tailwindcss/vite": "^4.1.7",
     "axios": "^1.9.0",
+    "date-fns": "^4.1.0",
     "html2canvas": "^1.4.1",
     "jspdf": "^3.0.1",
+    "randomcolor": "^0.6.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.6.1",
+    "recharts": "^3.0.2",
     "tailwindcss": "^4.1.7"
   },
   "devDependencies": {

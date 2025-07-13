@@ -6,11 +6,11 @@ const commentSchema = mongoose.Schema({
         ref: "Group",
         required: true,
     },
-    reportID: {
+    report: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Report",
     },
-    studentID: {
+    student: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Student",
         required: true,

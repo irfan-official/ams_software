@@ -5,11 +5,11 @@ const remarksSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Group"
     },
-    reportID: {
+    report: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Report",
     },
-    studentID: {
+    student: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Student"
     },
