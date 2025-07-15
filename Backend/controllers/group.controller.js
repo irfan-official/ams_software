@@ -450,7 +450,7 @@ export const deleteGroup = async (req, res, next) => {
     return res.status(200).json({
       success: true,
       responseData: groups,
-      message: `${group.group.title || "Group"} deleted`,
+      message: `${group?.title?.name || "Group"} deleted`,
     });
   } catch (error) {
     next(error);
