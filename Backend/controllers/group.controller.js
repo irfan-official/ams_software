@@ -575,13 +575,36 @@ export const groupReport = async (req, res, next) => {
   }
 };
 
-function weekFinder(length) {
-  let week = length;
+function parseDate(str) {
+  const [day, month, year] = str.split("/").map(Number);
+  return new Date(year, month - 1, day);
+}
 
-  if (length === 0) {
-    week += 1;
+function getWeekStart(d) {
+  const date = new Date(d);
+  const day = date.getDay();
+  const diff = date.getDate() - (day === 6 ? 0 : day + 1); // Adjust to Saturday
+  return new Date(date.getFullYear(), date.getMonth(), diff).toDateString();
+}
+
+function isSameYearMonthWeek(dateStr1, dateStr2) {
+  const date1 = parseDate(dateStr1);
+  const date2 = parseDate(dateStr2);
+
+  if (date1.getFullYear() !== date2.getFullYear()) return false;
+  if (date1.getMonth() !== date2.getMonth()) return false;
+
+  return getWeekStart(date1) === getWeekStart(date2);
+}
+
+function weekFinder(lastReportWeekNumber = "", oldDate = "", newDate) {
+  if (!lastReportWeekNumber) {
+    return 1;
   }
-  return week;
+
+  let inSameWeek = isSameYearMonthWeek(oldDate, newDate);
+
+  return inSameWeek ? lastReportWeekNumber : lastReportWeekNumber + 1;
 }
 
 export const createReport = async (req, res, next) => {
@@ -599,7 +622,7 @@ export const createReport = async (req, res, next) => {
       },
     ]);
 
-    let report = await Report.find({ group: groupID }).lean();
+    let report = await Report.find({ group: groupID });
 
     let studentIDArray = [];
     let studentSignatureArray = [];
@@ -659,12 +682,18 @@ export const createReport = async (req, res, next) => {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    const newDate = new Date().toLocaleDateString("en-GB");
+
     const createdReport = await Report.create({
       group: groupID,
       supervisor: userID,
-      week: weekFinder(report.length),
-      date: new Date().toLocaleDateString("en-GB"),
+      week: weekFinder(
+        report[report.length - 1]?.week || "",
+        report[report.length - 1]?.date || "",
+        newDate
+      ),
 
+      date: newDate,
       students: studentIDArray,
       studentSignature: studentSignatureArray,
       titles: titleArray,
