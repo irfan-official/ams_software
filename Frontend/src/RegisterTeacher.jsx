@@ -11,6 +11,7 @@ function RegisterTeacher() {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [dept, setDept] = useState("")
+  const [gender, setGender] = useState("")
   const [password, setPassword] = useState("")
 
   useEffect(() => {
@@ -24,10 +25,11 @@ function RegisterTeacher() {
       name: name.trim(),
       email: email.trim(),
       dept: dept.trim(),
-      password: password.trim()
+      password: password.trim(),
+      gender: gender.trim(),
     }
 
-    if (!obj.name || !obj.email || !obj.dept || !obj.password) {
+    if (!obj.name || !obj.email || !obj.dept || !obj.password || !obj.gender) {
       alert("all fields are required")
       return;
     }
@@ -37,25 +39,27 @@ function RegisterTeacher() {
       return;
     }
 
+    
+
 
 
     console.log(obj)
 
-    const newObj = {...obj}
+    const newObj = { ...obj }
 
 
-      let response = await axios.post("/auth/api/v1/supervisor/register",
-        newObj,
-        { withCredentials: true }
-      );
+    let response = await axios.post("/auth/api/v1/supervisor/register",
+      newObj,
+      { withCredentials: true }
+    );
 
-      alert(response.data.message)
+    alert(response.data.message)
 
-      if(!response.data.success){
-        return navigate("/register/teacher")
-      }
+    if (!response.data.success) {
+      return navigate("/register/teacher")
+    }
 
-      navigate("/")
+    navigate("/")
   }
 
   return (
@@ -107,27 +111,51 @@ function RegisterTeacher() {
                   Email Address
                 </label>
               </div>
-              <div className="relative mt-6">
-                <select
-                  id="dept"
-                  name="dept"
-                  required
-                  value={dept}
-                  onChange={(e) => setDept(e.target.value)}
-                  className="peer mt-1 w-full border-b-2 border-gray-300 bg-transparent px-0 py-1 text-gray-900 focus:border-gray-500 focus:outline-none"
-                >
-                  <option value="" disabled className="text-gray-400">
-                    Department
-                  </option>
-                  <option value="CSE">Computer Science and Engineering</option>
-                  <option value="EEE">Electrical Engineering</option>
-                  <option value="ICE">Information and Communication Engineering</option>
-                  <option value="ME">Mechanical Engineering</option>
-                  <option value="BBA">Business Administration</option>
-                  <option value="ENG">English</option>
-                  <option value="LAW">Law</option>
-                </select>
+              <div className="w-full relative mt-6 flex items-center justify-evenly gap-4">
 
+                <div className="relative w-[77%]">
+                  <select
+                    id="dept"
+                    name="dept"
+                    required
+                    value={dept}
+                    onChange={(e) => setDept(e.target.value)}
+                    className="peer mt-1 w-full border-b-2 border-gray-300 bg-transparent px-0 py-1 text-gray-900 focus:border-gray-500 focus:outline-none"
+                  >
+                    <option value="" disabled className="text-gray-400">
+                      Department
+                    </option>
+                    <option value="CSE">Computer Science and Engineering</option>
+                    <option value="EEE">Electrical Engineering</option>
+                    <option value="ICE">Information and Communication Engineering</option>
+                    <option value="ME">Mechanical Engineering</option>
+                    <option value="BBA">Business Administration</option>
+                    <option value="ENG">English</option>
+                    <option value="LAW">Law</option>
+                  </select>
+
+                </div>
+
+
+                <div className="relative w-[23%]">
+                  <select
+                    id="dept"
+                    name="dept"
+                    required
+                    value={gender}
+                    onChange={(e) => setGender(e.target.value)}
+                    className="peer mt-1 w-full border-b-2 border-gray-300 bg-transparent px-0 py-1 text-gray-900 focus:border-gray-500 focus:outline-none"
+                  >
+                    <option value="" disabled className="text-gray-400">
+                      Gender
+                    </option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="others">Others</option>
+
+                  </select>
+
+                </div>
               </div>
 
               <div className="relative mt-6">
