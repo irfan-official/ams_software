@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import { default_genderMale_student_image, default_genderFemale_student_image, default_genderOthers_student_image, defaultault_genderInitial_all_image } from "../utils/imagesChoise.js"
+import { Internal, External } from "../utils/ErrorTypesCode.js";
 
 const studentScheam = new mongoose.Schema(
   {
@@ -13,6 +15,16 @@ const studentScheam = new mongoose.Schema(
       type: String,
       default: "",
       trim: true,
+    },
+    image: {
+      type: String,
+      trim: true,
+    },
+
+    gender: {
+      type: String,
+      enum: ["male", "female", "others", "initial"],
+      default: "initial"
     },
 
     semister: {
@@ -41,6 +53,31 @@ const studentScheam = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+studentScheam.pre("save", async function (next) {
+  try {
+
+    // ----- changes to image field if it is not presence -----
+
+    if (!this.image) {
+
+      if (this.gender === "male") {
+        this.image = default_genderMale_student_image;
+      } else if (this.gender === "female") {
+        this.image = default_genderFemale_student_image;
+      } else if(this.gender === "others") {
+        this.image = default_genderOthers_student_image;
+      }else {
+        this.image = defaultault_genderInitial_all_image;
+      }
+    }
+
+    next();
+
+  } catch (err) {
+    next(new CustomError("Internal server Error", 500, External));
+  }
+});
 
 const Student = mongoose.model("Student", studentScheam);
 

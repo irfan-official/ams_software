@@ -11,6 +11,8 @@ import {
   deleteReport,
   updateTitle,
   checkUser,
+  allStudents,
+  allSupervisors
 } from "../controllers/group.controller.js";
 import {
   createGroupMiddleware,
@@ -23,6 +25,10 @@ const route = express.Router();
 route.use(AuthorizationMiddleware);
 
 route.get("/allgroup", allGroup);
+
+route.get("/allStudents", allStudents);
+
+route.get("/allSupervisors", allSupervisors);
 
 route.post("/create-group", createGroupMiddleware, createGroup);
 

@@ -10,14 +10,15 @@ function isValidEmail(email) {
 export const RegisterMiddleware = async (req, res, next) => {
 
     try {
-        let { name, dept, email, password } = req.body;
+        let { name, dept, email, password, gender } = req.body;
 
         name = name?.trim();
         dept = dept?.trim();
         email = email?.trim();
         password = password?.trim();
+        gender = gender?.trim();
 
-        if (!name || !dept || !email || !password) {
+        if (!name || !dept || !email || !password || !gender) {
             throw new CustomError("All Fields are required", 400, Internal)
         }
 
@@ -38,7 +39,7 @@ export const RegisterMiddleware = async (req, res, next) => {
         throw new CustomError("User Already exist", 401, Internal)
        }
 
-        req.user = { name, dept, email, password }
+        req.user = { name, dept, email, password, gender }
 
         next();
     } catch (error) {

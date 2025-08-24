@@ -6,13 +6,14 @@ import AssignCookies from "../utils/AssignCookies.js";
 
 export const RegisterController = async (req, res, next) => {
   try {
-    const { name, dept, email, password } = req.user;
+    const { name, dept, email, password, gender } = req.user;
 
     const createdUser = await Supervisor.create({
       name,
       department: dept,
       email,
       password,
+      gender
     });
 
     if (!createdUser) {

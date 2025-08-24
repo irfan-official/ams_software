@@ -9,6 +9,50 @@ import Supervisor from "../models/supervisor.models.js";
 import Comment from "../models/comment.model.js";
 import Remarks from "../models/remarks.moels.js";
 
+
+export const allStudents = async (req, res, next) => {
+  try{
+        const { userID } = req.userID;
+
+    if (!userID) {
+      throw new CustomError("Please Login ", 401, Internal);
+    }
+
+    const AllStudentsData = await Student.find().select("-signature -associateGroups").lean();
+
+    return res.status(200).json({
+      success: true,
+      message: "",
+      responseData: AllStudentsData || [],
+    })
+
+  }catch(error){
+        next(error);
+  }
+}
+
+export const allSupervisors = async (req, res, next) => {
+  try{
+
+    const { userID } = req.userID;
+
+    if (!userID) {
+      throw new CustomError("Please Login ", 401, Internal);
+    }
+
+    const AllSupervisorsData = await Supervisor.find().select("-password -groups").lean();
+
+    return res.status(200).json({
+      success: true,
+      message: "",
+      responseData: AllSupervisorsData || [],
+    })
+
+  }catch(error){
+        next(error);
+  }
+}
+
 export const allGroup = async (req, res, next) => {
   try {
     const { userID } = req.userID;
