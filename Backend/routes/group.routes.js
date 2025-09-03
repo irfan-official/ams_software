@@ -12,7 +12,8 @@ import {
   updateTitle,
   checkUser,
   allStudents,
-  allSupervisors
+  allSupervisors,
+  checkStudentSearchData
 } from "../controllers/group.controller.js";
 import {
   createGroupMiddleware,
@@ -47,5 +48,7 @@ route.patch("/update-report", updateReport);
 route.delete("/delete-report", deleteReport);
 
 route.post("/check-user", checkUser);
+
+route.get("/check-student-searchdata", checkStudentSearchData)
 
 export default route;

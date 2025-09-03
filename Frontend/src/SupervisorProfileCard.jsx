@@ -9,7 +9,7 @@ function SupervisorProfileCard({name, department, email, gender, image}) {
             {/* Level 1 */}
             <div className="__level_1__ w-full flex items-center gap-4">
                 <div className="__image__ w-[65px] h-[65px] rounded-full border-2 border-gray-400 overflow-hidden ">
-                    <img className='h-full w-full object-cover object-center' src={image} alt="" />
+                    <img className='h-full w-full object-cover object-top' src={image} alt="" />
                 </div>
                 <h2 className="__name__">{name}</h2>
             </div>

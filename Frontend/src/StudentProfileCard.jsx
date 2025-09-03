@@ -8,7 +8,7 @@ function StudentProfileCard({ name, image, id, semister, department }) {
             {/* Level 1 */}
             <div className="__level_1__ w-full flex items-center gap-4">
                 <div className="__image__ w-[65px] h-[65px] rounded-full border-2 border-gray-400 overflow-hidden ">
-                    <img className='h-full w-full object-cover object-center' src={image} alt="" />
+                    <img className='h-full w-full object-cover object-top' src={image} alt="" />
                 </div>
                 <h2 className="__name__">{name}</h2>
             </div>
@@ -19,7 +19,7 @@ function StudentProfileCard({ name, image, id, semister, department }) {
             <div className="__level_2__ mt-1 relative group">
                 {/* Overlay */}
                 <div className="absolute inset-0 bg-amber-50/5 backdrop-blur-xs hidden group-hover:flex items-center justify-center rounded-md transition">
-                    <button className="font-semibold text-white bg-slate-800 hover:bg-slate-900 px-5 hover:cursor-pointer py-2 rounded-lg shadow-md">
+                    <button className="border border-slate-300/40 font-semibold text-white bg-slate-800 hover:bg-slate-900 px-5 hover:cursor-pointer py-2 rounded-lg shadow-md">
                         View Profile
                     </button>
                 </div>

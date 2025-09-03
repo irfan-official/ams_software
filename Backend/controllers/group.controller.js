@@ -11,8 +11,8 @@ import Remarks from "../models/remarks.moels.js";
 
 
 export const allStudents = async (req, res, next) => {
-  try{
-        const { userID } = req.userID;
+  try {
+    const { userID } = req.userID;
 
     if (!userID) {
       throw new CustomError("Please Login ", 401, Internal);
@@ -26,13 +26,13 @@ export const allStudents = async (req, res, next) => {
       responseData: AllStudentsData || [],
     })
 
-  }catch(error){
-        next(error);
+  } catch (error) {
+    next(error);
   }
 }
 
 export const allSupervisors = async (req, res, next) => {
-  try{
+  try {
 
     const { userID } = req.userID;
 
@@ -48,8 +48,8 @@ export const allSupervisors = async (req, res, next) => {
       responseData: AllSupervisorsData || [],
     })
 
-  }catch(error){
-        next(error);
+  } catch (error) {
+    next(error);
   }
 }
 
@@ -1031,3 +1031,49 @@ export const checkUser = async (req, res, next) => {
     success: false,
   });
 };
+
+export const checkStudentSearchData = async (req, res, next) => {
+  try {
+   let {inputValue} = req.query;
+   
+   let bucket = inputValue.split(" ");
+
+   let resultBucket = [];
+
+   for(let value of bucket){ 
+
+    let convertionType = Number(value);
+
+    if(typeof(convertionType) === "number"){
+        if(value.length <= 2 && value.length > 0){
+          // then its a semister
+          let val = Student.find({
+            semister: value
+          })
+
+        }else if(value.length > 0){
+          //then its a ID
+            let val = Student.find({
+            studentID: value
+          })
+        }
+    }
+   }
+
+   
+   console.log("inputValue: ->", bucket)
+  }
+  catch (error) {
+    next(error);
+  }
+}
+
+export const checkSupervisorSearchData = async (req, res, next) => {
+  try {
+   
+  }
+  catch (error) {
+    next(error);
+  }
+}
+
